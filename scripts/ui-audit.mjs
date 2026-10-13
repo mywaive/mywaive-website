@@ -4,7 +4,7 @@
  * own design-system constraints in /context.
  */
 import { chromium } from 'playwright';
-const BASE = process.env.BASE ?? 'http://localhost:4400';
+const BASE = process.env.PORT ?? 'http://localhost:3000';
 const PAGES = ['/', '/about', '/product', '/contact', '/for-industries/pension-providers', '/for-industries/corporates', '/for-industries/partners', '/legal/privacy-policy'];
 const out = [];
 const add = (sev, cat, page, vp, msg) => out.push({ sev, cat, page, vp, msg });

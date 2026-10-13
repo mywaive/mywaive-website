@@ -15,8 +15,8 @@
     "qa": "OUT=qa-output node scripts/qa.mjs",
     "images": "node scripts/images/generate.mjs",
     "serve:dist": "node scripts/serve-dist.mjs dist vercel.json",
-    "qa:dist": "BASE=http://localhost:4400 OUT=qa-output node scripts/qa.mjs",
-    "ui-audit": "BASE=http://localhost:4400 node scripts/ui-audit.mjs",
+    "qa:dist": "BASE=http://localhost:3000 OUT=qa-output node scripts/qa.mjs",
+    "ui-audit": "BASE=http://localhost:3000 node scripts/ui-audit.mjs",
     "deploy": "astro build && npx --yes vercel deploy --prod --yes",
     "deploy:preview": "astro build && npx --yes vercel deploy --yes"
   },

@@ -7,7 +7,7 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const axeSource = readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
 
-const BASE = process.env.BASE ?? 'http://localhost:4321';
+const BASE = process.env.PORT ?? 'http://localhost:3000';
 const OUT = process.env.OUT ?? '/tmp/qa';
 const pages = ['/', '/about', '/product', '/contact', '/for-industries/pension-providers', '/for-industries/corporates', '/for-industries/partners', '/legal/privacy-policy', '/404'];
 

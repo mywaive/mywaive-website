@@ -11,4 +11,4 @@ http.createServer((req, res) => {
   let status = 200; if (!fs.existsSync(f)) { f = path.join(root, '404.html'); status = 404; }
   const h = { 'Content-Type': types[path.extname(f)] ?? 'application/octet-stream' }; for (const x of global) h[x.key] = x.key === 'Content-Security-Policy' ? x.value.replace(/;\s*upgrade-insecure-requests/, '') : x.value; // local server is plain http; WebKit would upgrade localhost requests to https
   res.writeHead(status, h); fs.createReadStream(f).pipe(res);
-}).listen(4400, () => console.log('serving on 4400'));
+}).listen(process.env.PORT || 3000, () => console.log(`serving on ${process.env.PORT || 3000}`));
