@@ -29,9 +29,9 @@ The site's own URL is set by `site` in `astro.config.mjs` (`https://www.mywaive.
 | Variable | Used by | When |
 |---|---|---|
 | `CONTACT_TO` | `scripts/contact.mjs` | **Runtime.** Inbox(es) that receive enquiries; comma-separate for several. Defaults to `jchapman@mywaive.io, james@mywaive.io, hello@mywaive.io` |
-| `CONTACT_FROM` | `scripts/contact.mjs` | **Runtime.** The `From` address. Defaults to `myWaive website <hello@mywaive.io>` |
-| `SMTP_HOST`, `SMTP_PORT` | `scripts/contact.mjs` | **Runtime.** Mail server. Default `relay-hosting.secureserver.net:25` (GoDaddy's internal relay) |
-| `SMTP_USER`, `SMTP_PASS` | `scripts/contact.mjs` | **Runtime.** Set to use an authenticated mailbox instead of the relay. `SMTP_SECURE` forces TLS (otherwise inferred: on for port 465) |
+| `CONTACT_FROM` | `scripts/contact.mjs` | **Runtime.** The `From` address — must be the mailbox the sender is authorised to send as (`jchapman@mywaive.io`). `Reply-To` is set to the enquirer regardless |
+| `GRAPH_TENANT_ID`, `GRAPH_CLIENT_ID`, `GRAPH_CLIENT_SECRET` | `scripts/contact.mjs` | **Runtime.** When set, mail is sent via Microsoft Graph (app-only OAuth) — the preferred path. `GRAPH_SENDER` overrides the mailbox to send as (defaults to the `CONTACT_FROM` address) |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` | `scripts/contact.mjs` | **Runtime.** SMTP fallback, used only when `GRAPH_*` is unset (e.g. a transactional provider). `SMTP_SECURE` forces implicit TLS; otherwise inferred (on only for port 465). `SMTP_JSON=true` composes without sending, for local dev |
 | `PUBLIC_FORM_ENDPOINT` | ContactForm | **Build time.** Override where the form posts. It is written into the HTML, so changing it needs a rebuild. When empty, the form posts to the site's own `/api/contact` |
 | `VERCEL_ENV` | BaseLayout | Set automatically by Vercel. Any value other than `production` adds `noindex` to every page |
 | `ATLASCLOUD_API_KEY` | `scripts/images/generate.mjs` | Local tooling only; never needed for a build |
@@ -115,36 +115,57 @@ On a host that can only serve static files (e.g. plain cPanel shared hosting), u
 
 The form posts to the site's own `/api/contact`, handled by `scripts/contact.mjs` running inside the Node server. It parses the submission, drops honeypot spam, and emails the enquiry to `CONTACT_TO` (comma-separate for several recipients, e.g. `jchapman@mywaive.io, james@mywaive.io, hello@mywaive.io`), with the sender's address as `Reply-To` so you can reply directly. The JavaScript path sends `Accept: application/json` and reads a `{ "ok": true }` response; the no-JavaScript path gets a plain thank-you page.
 
-Mail is sent over SMTP, configured by the `SMTP_*` / `CONTACT_*` variables in [Environment variables](#environment-variables):
+`mywaive.io` email is on **Microsoft 365**, whose tenant blocks basic-auth SMTP (no app passwords are available). So mail is sent via **Microsoft Graph with app-only OAuth** — set the `GRAPH_*` variables and the handler uses that path; the `SMTP_*` variables are only a fallback.
 
-- **Authenticated mailbox (recommended):** set `SMTP_USER`/`SMTP_PASS` and point `SMTP_HOST`/`SMTP_PORT` at the mailbox's SMTP. For GoDaddy email that is `smtpout.secureserver.net:465`. The mail is then SPF-aligned and DKIM-signed, and mail between `@mywaive.io` boxes never leaves GoDaddy's mail system — so it reaches inboxes reliably.
-- **GoDaddy's internal relay** (`relay-hosting.secureserver.net:25`, no login): works only from inside GoDaddy hosting and has poor deliverability. Because it is unauthenticated and not DKIM-signed, mail claiming to be from `@mywaive.io` is often **silently dropped or spam-filtered** — including by your own mailboxes. Avoid it for anything you need to receive reliably.
+#### Microsoft Graph setup (one-time, needs an Entra ID admin)
 
-`CONTACT_FROM` must be an address you are authorised to send as — i.e. on the same domain as the authenticated `SMTP_USER`. A `From` that the sending server isn't authorised for will be junked as spoofing.
+1. **Register an app:** Entra admin centre → *App registrations* → *New registration*. Name it (e.g. "myWaive website contact form"), single-tenant, no redirect URI. Note the **Directory (tenant) ID** and **Application (client) ID**.
+2. **Grant send permission:** the app → *API permissions* → *Add a permission* → *Microsoft Graph* → **Application permissions** → **Mail.Send** → Add, then **Grant admin consent**.
+3. **Create a secret:** the app → *Certificates & secrets* → *New client secret*. Copy the secret **Value** immediately (shown once).
+4. **Scope it to one mailbox (recommended):** `Mail.Send` application permission lets the app send as *any* mailbox. Restrict it to `jchapman@mywaive.io` with an [application access policy](https://learn.microsoft.com/graph/auth-limit-mailbox-access) in Exchange Online PowerShell:
+   ```powershell
+   New-ApplicationAccessPolicy -AppId <client-id> -PolicyScopeGroupId jchapman@mywaive.io `
+     -AccessRight RestrictAccess -Description "myWaive contact form may send only as jchapman@"
+   ```
+5. **Set the env vars** on the host (cPanel → Node app) and restart:
+   ```
+   GRAPH_TENANT_ID     = <directory (tenant) id>
+   GRAPH_CLIENT_ID     = <application (client) id>
+   GRAPH_CLIENT_SECRET = <secret value>
+   GRAPH_SENDER        = jchapman@mywaive.io      # optional; defaults to the CONTACT_FROM address
+   CONTACT_FROM        = myWaive website <jchapman@mywaive.io>
+   CONTACT_TO          = jchapman@mywaive.io, james@mywaive.io, hello@mywaive.io
+   ```
 
-Each accepted send is logged to the host's app log as `[contact] sent id=… accepted=… rejected=… response=…`. If a test enquiry never arrives, check that line first: `accepted` should list every recipient and `response` should be a `250`. Anything in `rejected`, or a 4xx/5xx `response`, names the problem.
+`GRAPH_SENDER` / `CONTACT_FROM` must be a real licensed mailbox the app is allowed to send as (`jchapman@mywaive.io`). `hello@mywaive.io` stays valid as a *recipient* in `CONTACT_TO` — the send-as restriction only applies to the `From`. Enquirers are reachable because `Reply-To` is set to their address.
 
-The hidden `_gotcha` field is a spam trap: a submission with it filled in is silently accepted but never emailed. To move delivery to a third-party provider instead, set `PUBLIC_FORM_ENDPOINT` to its URL and rebuild (and add its origin to the CSP's `connect-src`/`form-action`, per [Security headers](#security-headers)). Whichever service handles submissions processes personal data, so name it in the privacy policy.
+On success the app log shows `[contact] sent via Graph as jchapman@mywaive.io to …`. A failure logs the Graph error (e.g. `graph sendMail 403` if the access policy blocks the sender, `graph token 401` for a bad secret), and the form returns a 500.
 
-To test the full pipeline locally without a reachable SMTP server, set `SMTP_JSON=true`: the server composes each message but does not send it.
+#### SMTP fallback
+
+If you can't use Graph, leave `GRAPH_*` unset and point the `SMTP_*` variables at a **transactional provider** (SendGrid, Postmark, Resend, …) — see `.env.example` for each one's host/port/credentials. Microsoft 365's own `smtp.office365.com` will **not** work on this tenant (basic auth is disabled), and GoDaddy's `relay-hosting.secureserver.net` relay returns `250 accepted` then silently drops self-domain mail — don't use either. A transactional provider needs its own domain verification (its SPF/DKIM records) and processes enquiry data, so name it in the privacy policy. The SMTP path logs `[contact] sent id=… accepted=… rejected=… response=…`.
+
+The hidden `_gotcha` field is a spam trap: a submission with it filled in is silently accepted but never emailed. To bypass the Node handler entirely and post to a hosted form service instead, set `PUBLIC_FORM_ENDPOINT` to its URL and rebuild (and add its origin to the CSP's `connect-src`/`form-action`, per [Security headers](#security-headers)).
+
+To test the full pipeline locally without sending, set `SMTP_JSON=true` (and leave `GRAPH_*` unset): the server composes each message but does not deliver it.
 
 ### Deliverability (SPF, DKIM, DMARC)
 
-Even with authenticated SMTP, set these DNS records for `mywaive.io` so receiving servers trust mail from the domain. Add them in GoDaddy's DNS manager; allow up to an hour (or the record's TTL) to take effect.
+Set these DNS records for `mywaive.io` (in GoDaddy's DNS manager, since the domain is registered there) so receiving servers trust Microsoft 365 mail from the domain. Allow up to an hour (or the record's TTL) to take effect. If mail already flows through 365, SPF and DKIM may already be in place — check before adding.
 
 | Record | Host / name | Type | Value |
 |---|---|---|---|
-| **SPF** | `@` | TXT | `v=spf1 include:secureserver.net -all` (authorises GoDaddy's mail servers; keep a single SPF record and merge includes if one already exists) |
-| **DKIM** | provided by GoDaddy | CNAME/TXT | Enable DKIM in the GoDaddy email control panel ("Email Deliverability" / DKIM) and add the record it gives you, so outgoing mail is cryptographically signed |
+| **SPF** | `@` | TXT | `v=spf1 include:spf.protection.outlook.com -all` (authorises Microsoft 365. Keep a **single** SPF record; if one exists, merge this `include` into it rather than adding a second) |
+| **DKIM** | `selector1._domainkey`, `selector2._domainkey` | CNAME | Enable DKIM in the Microsoft 365 Defender portal (Email & collaboration → Policies → *Email authentication settings* → DKIM → turn on for `mywaive.io`). It gives two CNAMEs pointing at `…onmicrosoft.com`; add both, then switch DKIM to *Enabled*. |
 | **DMARC** | `_dmarc` | TXT | `v=DMARC1; p=none; rua=mailto:hello@mywaive.io` — start with `p=none` to monitor, then tighten to `p=quarantine` / `p=reject` once SPF and DKIM pass |
 
 Verify after deploying:
 
-1. Submit a test enquiry and confirm the `[contact] sent … accepted=… response=250` log line (see above).
+1. Submit a test enquiry and confirm the log line `[contact] sent via Graph as jchapman@mywaive.io to …` (or, on the SMTP fallback, `[contact] sent … response=250`).
 2. Send one to an external Gmail address, open **Show original**, and check `SPF: PASS`, `DKIM: PASS`, `DMARC: PASS`.
 3. Optionally run the message through [mail-tester.com](https://www.mail-tester.com) for a deliverability score.
 
-If GoDaddy's authenticated SMTP still underdelivers, switch to a transactional email provider (Postmark, Resend, SendGrid, …) with a verified sending domain. It is the same `nodemailer` code path — only the `SMTP_*` values change — plus that provider's own SPF/DKIM records.
+These records apply to the Graph path, which sends through Microsoft 365. On the transactional-provider fallback, use that provider's own SPF/DKIM records instead.
 
 ## Release checklist
 

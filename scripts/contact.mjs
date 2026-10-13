@@ -2,26 +2,77 @@
 // validates it, drops honeypot spam, and emails the enquiry to the site inbox.
 // Mounted at POST /api/contact by scripts/serve-dist.mjs. Configured entirely by
 // environment variables (see .env.example) so no secrets live in the repo.
+//
+// Delivery path is chosen by env: set GRAPH_* to send via Microsoft 365 with app-only OAuth
+// (preferred — the tenant blocks basic-auth SMTP); otherwise it falls back to SMTP (a
+// transactional provider, or SMTP_JSON=true in dev to compose without sending).
 import nodemailer from 'nodemailer';
 
 const MAX_BODY = 64 * 1024; // enquiries are tiny; anything larger is abuse
 const TO = process.env.CONTACT_TO || 'jchapman@mywaive.io, james@mywaive.io, hello@mywaive.io';
-const FROM = process.env.CONTACT_FROM || 'myWaive website <hello@mywaive.io>';
+const FROM = process.env.CONTACT_FROM || 'myWaive website <jchapman@mywaive.io>';
+const addr = (s) => (/<([^>]+)>/.exec(s)?.[1] || s).trim(); // bare address from "Name <addr>"
+const recipients = (s) => s.split(',').map(addr).filter(Boolean);
 
-// One transport for the process. Defaults to GoDaddy's internal relay
-// (relay-hosting.secureserver.net:25, no auth, only reachable from GoDaddy hosting).
-// Set SMTP_USER/SMTP_PASS to switch to an authenticated mailbox (e.g. smtpout.secureserver.net:465).
+const GRAPH = process.env.GRAPH_CLIENT_ID
+  ? {
+      tenant: process.env.GRAPH_TENANT_ID,
+      clientId: process.env.GRAPH_CLIENT_ID,
+      clientSecret: process.env.GRAPH_CLIENT_SECRET,
+      sender: process.env.GRAPH_SENDER || addr(FROM), // the 365 mailbox to send as
+    }
+  : null;
+
+// --- Microsoft Graph (OAuth2 client-credentials, app-only) ---
+let token = { value: '', exp: 0 };
+async function graphToken() {
+  if (token.value && Date.now() < token.exp) return token.value;
+  const res = await fetch(`https://login.microsoftonline.com/${GRAPH.tenant}/oauth2/v2.0/token`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ client_id: GRAPH.clientId, client_secret: GRAPH.clientSecret, scope: 'https://graph.microsoft.com/.default', grant_type: 'client_credentials' }),
+  });
+  if (!res.ok) throw new Error(`graph token ${res.status}: ${await res.text()}`);
+  const j = await res.json();
+  token = { value: j.access_token, exp: Date.now() + (j.expires_in - 60) * 1000 }; // refresh a minute early
+  return token.value;
+}
+async function graphSend({ subject, html, replyTo }) {
+  const message = {
+    subject,
+    body: { contentType: 'HTML', content: html },
+    from: { emailAddress: { address: GRAPH.sender } },
+    toRecipients: recipients(TO).map((a) => ({ emailAddress: { address: a } })),
+    replyTo: replyTo ? [{ emailAddress: { address: replyTo } }] : undefined,
+  };
+  const res = await fetch(`https://graph.microsoft.com/v1.0/users/${encodeURIComponent(GRAPH.sender)}/sendMail`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${await graphToken()}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message, saveToSentItems: false }),
+  });
+  if (!res.ok) throw new Error(`graph sendMail ${res.status}: ${await res.text()}`);
+  console.log(`[contact] sent via Graph as ${GRAPH.sender} to ${recipients(TO).join(',')}`);
+}
+
+// --- SMTP fallback (nodemailer): a transactional provider, or SMTP_JSON=true for local dev ---
 let transport;
 const mailer = () => {
   if (transport) return transport;
-  if (process.env.SMTP_JSON === 'true') return (transport = nodemailer.createTransport({ jsonTransport: true })); // dev: compose but don't send
+  if (process.env.SMTP_JSON === 'true') return (transport = nodemailer.createTransport({ jsonTransport: true }));
   const host = process.env.SMTP_HOST || 'relay-hosting.secureserver.net';
   const port = Number(process.env.SMTP_PORT || 25);
   const secure = process.env.SMTP_SECURE ? process.env.SMTP_SECURE === 'true' : port === 465;
   const auth = process.env.SMTP_USER ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS } : undefined;
-  transport = nodemailer.createTransport({ host, port, secure, auth });
+  transport = nodemailer.createTransport({ host, port, secure, requireTLS: !secure, auth }); // 587 upgrades via STARTTLS
+  console.log(`[contact] mail via ${host}:${port}${secure ? ' TLS' : ''} ${auth ? `auth=${auth.user}` : 'NO AUTH (relay — unreliable)'}`);
   return transport;
 };
+async function smtpSend({ subject, html, text, replyTo }) {
+  const info = await mailer().sendMail({ from: FROM, to: TO, replyTo, subject, text, html });
+  console.log(`[contact] sent id=${info.messageId} accepted=${(info.accepted || []).join(',')} rejected=${(info.rejected || []).join(',')} response=${info.response || ''}`);
+}
+
+const deliver = (msg) => (GRAPH ? graphSend(msg) : smtpSend(msg));
 
 // The fields the form (ContactForm.astro) sends, with human labels for the email.
 const FIELDS = [
@@ -97,16 +148,12 @@ export async function handleContact(req, res) {
       FIELDS.map(([k, label]) => `<tr><td style="font-weight:600;vertical-align:top">${label}</td><td>${(get(k) || '—').replace(/</g, '&lt;')}</td></tr>`).join('') +
       `</table>`;
 
-    const info = await mailer().sendMail({
-      from: FROM,
-      to: TO,
-      replyTo: get('email'),
+    await deliver({
       subject: `New demo request — ${get('name')}${get('organisation') ? `, ${get('organisation')}` : ''}`,
       text,
       html,
+      replyTo: get('email'),
     });
-    // Logged to the host's app log so you can confirm the mail server accepted it (and for whom)
-    console.log(`[contact] sent id=${info.messageId} accepted=${(info.accepted || []).join(',')} rejected=${(info.rejected || []).join(',')} response=${info.response || ''}`);
 
     return wantsJson
       ? send(res, 200, { ok: true })
