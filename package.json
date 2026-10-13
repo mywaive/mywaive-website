@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "start": "node scripts/serve-dist.mjs dist vercel.json",
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",
@@ -22,17 +23,17 @@
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
     "@fontsource-variable/dm-sans": "^5.3.0",
-    "astro": "^7.3.4"
+    "astro": "^7.3.4",
+    "typescript": "^6.0.3",
+    "@iconify-json/material-symbols": "^1.2.93",
+    "@iconify/utils": "^3.1.7"
   },
   "allowScripts": {
     "esbuild": true
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
-    "@iconify-json/material-symbols": "^1.2.93",
-    "@iconify/utils": "^3.1.7",
     "axe-core": "^4.13.0",
-    "playwright": "1.49",
-    "typescript": "^6.0.3"
+    "playwright": "1.49"
   }
 }
