@@ -28,7 +28,7 @@ The site's own URL is set by `site` in `astro.config.mjs` (`https://www.mywaive.
 
 | Variable | Used by | When |
 |---|---|---|
-| `CONTACT_TO` | `scripts/contact.mjs` | **Runtime.** Inbox that receives enquiries. Defaults to `hello@mywaive.io` |
+| `CONTACT_TO` | `scripts/contact.mjs` | **Runtime.** Inbox(es) that receive enquiries; comma-separate for several. Defaults to `jchapman@mywaive.io, james@mywaive.io, hello@mywaive.io` |
 | `CONTACT_FROM` | `scripts/contact.mjs` | **Runtime.** The `From` address. Defaults to `myWaive website <hello@mywaive.io>` |
 | `SMTP_HOST`, `SMTP_PORT` | `scripts/contact.mjs` | **Runtime.** Mail server. Default `relay-hosting.secureserver.net:25` (GoDaddy's internal relay) |
 | `SMTP_USER`, `SMTP_PASS` | `scripts/contact.mjs` | **Runtime.** Set to use an authenticated mailbox instead of the relay. `SMTP_SECURE` forces TLS (otherwise inferred: on for port 465) |
@@ -113,16 +113,38 @@ On a host that can only serve static files (e.g. plain cPanel shared hosting), u
 
 ## Contact form
 
-The form posts to the site's own `/api/contact`, handled by `scripts/contact.mjs` running inside the Node server. It parses the submission, drops honeypot spam, and emails the enquiry to `CONTACT_TO` (default `hello@mywaive.io`), with the sender's address as `Reply-To` so you can reply directly. The JavaScript path sends `Accept: application/json` and reads a `{ "ok": true }` response; the no-JavaScript path gets a plain thank-you page.
+The form posts to the site's own `/api/contact`, handled by `scripts/contact.mjs` running inside the Node server. It parses the submission, drops honeypot spam, and emails the enquiry to `CONTACT_TO` (comma-separate for several recipients, e.g. `jchapman@mywaive.io, james@mywaive.io, hello@mywaive.io`), with the sender's address as `Reply-To` so you can reply directly. The JavaScript path sends `Accept: application/json` and reads a `{ "ok": true }` response; the no-JavaScript path gets a plain thank-you page.
 
 Mail is sent over SMTP, configured by the `SMTP_*` / `CONTACT_*` variables in [Environment variables](#environment-variables):
 
-- **Default — GoDaddy's internal relay** (`relay-hosting.secureserver.net:25`, no login). Works only from inside GoDaddy hosting and has weaker deliverability (add SPF/DKIM for the domain to reduce spam filtering). No credentials to manage.
-- **Authenticated mailbox** (recommended for deliverability): set `SMTP_USER`/`SMTP_PASS` and point `SMTP_HOST`/`SMTP_PORT` at the mailbox's SMTP. For GoDaddy email that is `smtpout.secureserver.net:465`.
+- **Authenticated mailbox (recommended):** set `SMTP_USER`/`SMTP_PASS` and point `SMTP_HOST`/`SMTP_PORT` at the mailbox's SMTP. For GoDaddy email that is `smtpout.secureserver.net:465`. The mail is then SPF-aligned and DKIM-signed, and mail between `@mywaive.io` boxes never leaves GoDaddy's mail system — so it reaches inboxes reliably.
+- **GoDaddy's internal relay** (`relay-hosting.secureserver.net:25`, no login): works only from inside GoDaddy hosting and has poor deliverability. Because it is unauthenticated and not DKIM-signed, mail claiming to be from `@mywaive.io` is often **silently dropped or spam-filtered** — including by your own mailboxes. Avoid it for anything you need to receive reliably.
+
+`CONTACT_FROM` must be an address you are authorised to send as — i.e. on the same domain as the authenticated `SMTP_USER`. A `From` that the sending server isn't authorised for will be junked as spoofing.
+
+Each accepted send is logged to the host's app log as `[contact] sent id=… accepted=… rejected=… response=…`. If a test enquiry never arrives, check that line first: `accepted` should list every recipient and `response` should be a `250`. Anything in `rejected`, or a 4xx/5xx `response`, names the problem.
 
 The hidden `_gotcha` field is a spam trap: a submission with it filled in is silently accepted but never emailed. To move delivery to a third-party provider instead, set `PUBLIC_FORM_ENDPOINT` to its URL and rebuild (and add its origin to the CSP's `connect-src`/`form-action`, per [Security headers](#security-headers)). Whichever service handles submissions processes personal data, so name it in the privacy policy.
 
 To test the full pipeline locally without a reachable SMTP server, set `SMTP_JSON=true`: the server composes each message but does not send it.
+
+### Deliverability (SPF, DKIM, DMARC)
+
+Even with authenticated SMTP, set these DNS records for `mywaive.io` so receiving servers trust mail from the domain. Add them in GoDaddy's DNS manager; allow up to an hour (or the record's TTL) to take effect.
+
+| Record | Host / name | Type | Value |
+|---|---|---|---|
+| **SPF** | `@` | TXT | `v=spf1 include:secureserver.net -all` (authorises GoDaddy's mail servers; keep a single SPF record and merge includes if one already exists) |
+| **DKIM** | provided by GoDaddy | CNAME/TXT | Enable DKIM in the GoDaddy email control panel ("Email Deliverability" / DKIM) and add the record it gives you, so outgoing mail is cryptographically signed |
+| **DMARC** | `_dmarc` | TXT | `v=DMARC1; p=none; rua=mailto:hello@mywaive.io` — start with `p=none` to monitor, then tighten to `p=quarantine` / `p=reject` once SPF and DKIM pass |
+
+Verify after deploying:
+
+1. Submit a test enquiry and confirm the `[contact] sent … accepted=… response=250` log line (see above).
+2. Send one to an external Gmail address, open **Show original**, and check `SPF: PASS`, `DKIM: PASS`, `DMARC: PASS`.
+3. Optionally run the message through [mail-tester.com](https://www.mail-tester.com) for a deliverability score.
+
+If GoDaddy's authenticated SMTP still underdelivers, switch to a transactional email provider (Postmark, Resend, SendGrid, …) with a verified sending domain. It is the same `nodemailer` code path — only the `SMTP_*` values change — plus that provider's own SPF/DKIM records.
 
 ## Release checklist
 

@@ -5,7 +5,7 @@
 import nodemailer from 'nodemailer';
 
 const MAX_BODY = 64 * 1024; // enquiries are tiny; anything larger is abuse
-const TO = process.env.CONTACT_TO || 'hello@mywaive.io';
+const TO = process.env.CONTACT_TO || 'jchapman@mywaive.io, james@mywaive.io, hello@mywaive.io';
 const FROM = process.env.CONTACT_FROM || 'myWaive website <hello@mywaive.io>';
 
 // One transport for the process. Defaults to GoDaddy's internal relay
@@ -97,7 +97,7 @@ export async function handleContact(req, res) {
       FIELDS.map(([k, label]) => `<tr><td style="font-weight:600;vertical-align:top">${label}</td><td>${(get(k) || '—').replace(/</g, '&lt;')}</td></tr>`).join('') +
       `</table>`;
 
-    await mailer().sendMail({
+    const info = await mailer().sendMail({
       from: FROM,
       to: TO,
       replyTo: get('email'),
@@ -105,6 +105,8 @@ export async function handleContact(req, res) {
       text,
       html,
     });
+    // Logged to the host's app log so you can confirm the mail server accepted it (and for whom)
+    console.log(`[contact] sent id=${info.messageId} accepted=${(info.accepted || []).join(',')} rejected=${(info.rejected || []).join(',')} response=${info.response || ''}`);
 
     return wantsJson
       ? send(res, 200, { ok: true })
