@@ -1,0 +1,23 @@
+---
+import { Image } from 'astro:assets';
+/** Photo if supplied, otherwise initials on a brand tint (as in the investor pack). */
+interface Props { name: string; photo?: string; size?: number }
+const { name, photo, size = 96 } = Astro.props;
+const initials = name.replace(/,.*$/, '').split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+// Headshots live in src/assets/photos/people so they go through the image pipeline
+// (hashed, resized, webp) rather than being served raw. `photo` is just the filename.
+const shots = import.meta.glob<{ default: ImageMetadata }>('/src/assets/photos/people/*.{jpg,jpeg,png,webp}', { eager: true });
+const shot = photo ? shots[`/src/assets/photos/people/${photo}`] : undefined;
+if (photo && !shot) throw new Error(`Avatar: no such headshot src/assets/photos/people/${photo} (for ${name})`);
+// A source narrower than 2x the slot still builds, but its "2x" candidate is a smaller file
+// wearing a 2x label — it only shows up as softness at the widest breakpoint. Warn loudly so
+// the next under-spec headshot is caught at build time rather than on the live site.
+if (shot && shot.default.width < size * 2) {
+  console.warn(`[Avatar] ${photo} is ${shot.default.width}px; ${size * 2}px needed for a true 2x (${name}) — it will soften at wide viewports.`);
+}
+---
+{shot
+  ? <Image class="avatar" src={shot.default} alt="" width={size} height={size} densities={[1, 2]} loading="lazy" style={`--s:${size}px`} />
+  : <div class="avatar avatar-initials" style={`--s:${size}px`} aria-hidden="true">{initials}</div>}
+
+<style>@import './Avatar.css';</style>

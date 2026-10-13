@@ -1,0 +1,56 @@
+.site-header { position: absolute; inset: 0 0 auto 0; z-index: 100; padding-block: var(--space-3); transition: background-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease), padding var(--dur) var(--ease); }
+.header-inner { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
+
+/* Theme: which logo / text colour */
+.site-header :global(.logo-dark) { display: none; }
+.theme-dark:not(.scrolled):not(.menu-open) { color: #fff; }
+.theme-dark:not(.scrolled):not(.menu-open) :global(.logo-light) { display: none; }
+.theme-dark:not(.scrolled):not(.menu-open) :global(.logo-dark) { display: inline-flex; }
+.theme-dark:not(.scrolled):not(.menu-open) .nav-link:hover { background: rgba(255,255,255,0.1); }
+
+.scrolled { position: fixed; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); box-shadow: 0 1px 0 var(--color-border); padding-block: var(--space-2); animation: slide-down var(--dur) var(--ease); }
+@keyframes slide-down { from { transform: translateY(-100%); } to { transform: none; } }
+
+.nav-link { display: inline-flex; align-items: center; gap: 2px; padding: 10px 14px; border-radius: var(--radius-pill); font-weight: 500; text-decoration: none; color: inherit; transition: background-color var(--dur) var(--ease); }
+.nav-link:hover { background: var(--color-brand-tint); }
+.nav-link.active { font-weight: 600; box-shadow: inset 0 -2px 0 currentColor; border-radius: 0; padding-inline: 4px; margin-inline: 10px; }
+.nav-link :global(.chev) { font-size: 20px; transition: transform var(--dur) var(--ease); }
+[aria-expanded="true"] :global(.chev) { transform: rotate(180deg); }
+
+.primary-nav > ul { display: flex; align-items: center; gap: var(--space-1); }
+.has-children { position: relative; }
+.has-children::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 12px; }
+.dropdown { position: absolute; top: calc(100% + 8px); left: 0; min-width: 320px; background: #fff; color: var(--color-text); border-radius: var(--radius-md); box-shadow: var(--shadow-card); border: 1px solid var(--color-border); padding: var(--space-2); display: none; }
+.has-children.open .dropdown, .has-children:focus-within .dropdown { display: block; }
+@media (hover: hover) { .has-children:hover .dropdown { display: block; } }
+.dropdown a { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: var(--radius-sm); text-decoration: none; }
+.dropdown a:hover, .dropdown a.active { background: var(--color-surface-tint); }
+.dd-label { font-weight: 600; }
+.dd-desc { font-size: var(--type-small); color: var(--color-text-muted); }
+
+.header-actions { display: flex; align-items: center; gap: var(--space-2); }
+.menu-toggle { display: none; width: 48px; height: 48px; border-radius: 50%; place-items: center; }
+.menu-toggle :global(.material-symbols-rounded) { font-size: 28px; }
+.menu-toggle :global(.icon-close) { display: none; }
+.menu-open .menu-toggle :global(.icon-close) { display: inline-block; }
+.menu-open .menu-toggle :global(.icon-open) { display: none; }
+.nav-cta { display: none; }
+
+@media (max-width: 1079px) {
+  .menu-toggle { display: grid; }
+  .header-actions :global(.header-cta), .header-cta-wrap { display: none; }
+  .theme-dark:not(.scrolled):not(.menu-open) .menu-toggle:hover { background: rgba(255,255,255,0.1); }
+  .primary-nav { display: none; position: fixed; inset: 0; top: 0; background: #fff; color: var(--color-text); padding: 96px var(--gutter) var(--space-6); overflow-y: auto; flex-direction: column; justify-content: space-between; }
+  .menu-open { position: fixed; background: #fff; color: var(--color-text); }
+  .menu-open .primary-nav { display: flex; z-index: 1; }
+  .menu-open :global(.logo), .menu-open .header-actions { position: relative; z-index: 2; }
+  .primary-nav > ul { flex-direction: column; align-items: stretch; gap: 0; }
+  .primary-nav > ul > li { border-bottom: 1px solid var(--color-border); }
+  .nav-link { width: 100%; justify-content: space-between; padding: 18px 0; font-size: 1.25rem; border-radius: 0; }
+  .nav-link:hover { background: none; }
+  .nav-link.active { box-shadow: none; margin: 0; padding-inline: 0; color: var(--color-brand); }
+  .dropdown { position: static; display: block; box-shadow: none; border: 0; padding: 0 0 var(--space-3) var(--space-3); min-width: 0; }
+  .dropdown a { padding: 10px 0; }
+  .nav-cta { display: block; margin-top: var(--space-6); }
+  .nav-cta :global(.btn) { width: 100%; }
+}

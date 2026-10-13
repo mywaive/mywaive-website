@@ -1,0 +1,45 @@
+.embedded .container { padding-inline: 0; }
+:global(.bg-lilac) .panel { border-color: transparent; }
+:global(.bg-lilac) .tab { border-color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.55); color: var(--colour-grey-800); }
+:global(.bg-lilac) .tab:hover { background: #fff; }
+:global(.bg-lilac) .tab[aria-selected="true"] { background: var(--color-brand); border-color: var(--color-brand); color: #fff; }
+.tabs { display: grid; gap: var(--space-5); }
+@media (min-width: 1080px) { .tabs-list { grid-template-columns: 320px minmax(0, 1fr); gap: var(--space-7); } }
+/* Pills: one wrapping row above the panel (board layout for Home) */
+/* flex-direction must be reset too — the ≥1080px .tablist rule sets column */
+.tabs-pills .tablist { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between; grid-template-columns: none; gap: var(--space-4); }
+.tabs-pills .tab { flex: 0 1 auto; border-radius: var(--radius-pill); padding: 12px 16px 12px 18px; background: var(--colour-white); border-color: transparent; box-shadow: 0 1px 2px rgba(3,10,47,0.06); }
+.tabs-pills .tab[aria-selected="true"] { background: var(--color-brand); color: #fff; }
+@media (min-width: 1080px) { .tabs-pills { grid-template-columns: 1fr; } }
+@media (max-width: 599px) { .tabs-pills .tab { padding: 10px 12px 10px 14px; } }
+.tablist { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--space-2); }
+@media (min-width: 1080px) { .tablist { display: flex; flex-direction: column; } }
+.tab { display: inline-flex; align-items: center; gap: var(--space-2); padding: 14px 18px; border-radius: var(--radius-md); font-weight: 600; text-align: left; line-height: 1.3; color: var(--color-text-muted); border: 1px solid var(--color-border); transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease); }
+.tab:hover { background: var(--color-brand-tint); color: var(--color-text); }
+@media (max-width: 1079px) { .tab { padding: 10px 12px; font-size: var(--type-small); } }
+@media (min-width: 1080px) { .tab { border-color: transparent; white-space: nowrap; } }
+.tab[aria-selected="true"] { background: var(--color-brand); border-color: var(--color-brand); color: #fff; }
+.panel[hidden] { display: none; }
+/* Sliding pill: the selected tab goes transparent and the pill shows through it */
+.tablist { position: relative; }
+/* :global — the pill is created by the script, so it carries no Astro scope attribute */
+.tablist :global(.tab-ink) { position: absolute; top: 0; left: 0; border-radius: var(--radius-md); background: var(--color-brand); pointer-events: none; }
+.tabs-pills :global(.tab-ink) { border-radius: var(--radius-pill); }
+.has-ink .tab { position: relative; z-index: 1; }
+.has-ink .tab[aria-selected="true"], :global(.bg-lilac) .has-ink .tab[aria-selected="true"] { background: transparent; border-color: transparent; }
+@media (prefers-reduced-motion: no-preference) {
+  .tablist :global(.tab-ink.ready) { transition: transform 320ms var(--ease-out), width 320ms var(--ease-out), height 320ms var(--ease-out); }
+  /* Panel content enters each time a tab is chosen: a panel leaving display:none restarts its animations */
+  .panel:not([hidden]) .panel-copy > * { animation: tab-rise 450ms var(--ease-out) both; }
+  .panel:not([hidden]) .panel-copy > :nth-child(2) { animation-delay: 50ms; }
+  .panel:not([hidden]) .panel-copy > :nth-child(3) { animation-delay: 100ms; }
+  .panel:not([hidden]) .panel-visual :global(.laptop) { animation: tab-glide 550ms var(--ease-out) 60ms both; }
+  .panel:not([hidden]) .panel-visual :global(.tablet) { animation: tab-glide 550ms var(--ease-out) 140ms both; }
+  .panel:not([hidden]) .panel-visual :global(.phone-slot) { animation: tab-glide 550ms var(--ease-out) 220ms both; }
+}
+@keyframes tab-rise { from { opacity: 0; transform: translateY(12px); } }
+@keyframes tab-glide { from { opacity: 0; transform: translateX(28px) scale(0.97); } }
+.panel { display: grid; gap: var(--space-5); align-items: center; border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-5); background: var(--color-surface); }
+@media (min-width: 600px) { .panel { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); padding: var(--space-6); } }
+.panel-copy h3 { margin: var(--space-4) 0 var(--space-2); }
+.panel-visual { display: flex; justify-content: center; align-items: center; padding-block: var(--space-4) var(--space-6); }

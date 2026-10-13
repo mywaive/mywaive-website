@@ -1,0 +1,5 @@
+/* Icon stacked above the heading, matching the other card blocks */
+.rm-head { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-4); margin-bottom: var(--space-5); }
+.rm ul { display: grid; gap: 12px; }
+.rm li { display: flex; gap: var(--space-3); align-items: flex-start; font-size: 1.125rem; line-height: 1.45; }
+.rm li :global(.material-symbols-rounded) { color: var(--color-brand); margin-top: 4px; }

@@ -1,0 +1,14 @@
+/* Type utilities */
+.h5 { font-size: var(--type-h5); line-height: var(--lh-tight); letter-spacing: -0.02em; }
+.h4 { font-size: var(--type-h4); line-height: var(--lh-tight); letter-spacing: -0.02em; }
+.h3 { font-size: var(--type-h3); letter-spacing: -0.015em; }
+.h2 { font-size: var(--type-h2); letter-spacing: -0.015em; }
+.h1 { font-size: var(--type-h1); }
+.h0 { font-size: var(--type-h0); }
+.lead { font-size: var(--type-lead); line-height: 1.4; }
+.small { font-size: var(--type-small); }
+.muted { color: var(--color-text-muted); }
+.on-dark .muted { color: var(--colour-grey-100); opacity: 0.85; }
+.highlight { color: var(--colour-primary-300); }
+.on-light .highlight, .highlight-brand { color: var(--color-brand); }
+

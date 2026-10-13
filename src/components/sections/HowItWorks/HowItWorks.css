@@ -1,0 +1,54 @@
+.embedded .container { padding-inline: 0; }
+/* Row (default) */
+.steps.row { display: grid; gap: var(--space-5); }
+@media (min-width: 600px) { .steps.row { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1080px) { .steps.row { grid-template-columns: repeat(var(--n), 1fr); gap: var(--space-6); } }
+.row .step { position: relative; padding-top: var(--space-4); border-top: 3px solid var(--color-brand-tint); }
+.on-dark .row .step { border-top-color: rgba(255,255,255,0.15); }
+.row .step::before { content: ""; position: absolute; top: -3px; left: 0; width: 56px; height: 3px; background: var(--color-brand); }
+.step-num { display: flex; align-items: center; justify-content: space-between; color: var(--color-brand); font-weight: 600; margin-bottom: var(--space-3); }
+.num { font-size: var(--type-h1); letter-spacing: -0.02em; }
+.row .step-icon { width: 40px; height: 40px; border-radius: 12px; }
+.on-dark .step-num { color: var(--colour-primary-300); }
+.step h3 { margin-bottom: var(--space-2); }
+@media (max-width: 599px) { .steps { gap: var(--space-4); } .step p { font-size: var(--type-small); } }
+.hiw-link { margin-top: var(--space-6); }
+
+/* Side: copy left, stacked cards right (feedback H7) */
+.side-grid { display: grid; gap: var(--space-6); align-items: start; }
+@media (min-width: 1080px) { .side-grid { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: var(--space-9); } .side-grid .section-header { position: sticky; top: 120px; margin-bottom: 0; } }
+.steps.side { display: grid; gap: var(--space-3); }
+.side .step { display: grid; grid-template-columns: auto 1fr; gap: var(--space-4); align-items: start; padding: var(--space-5); border-radius: var(--radius-lg); }
+/* Blue ramp, lightest at the top darkening downward (Primary 100 → Wave → Primary 800) */
+.side .step:nth-child(3n+1) { background: var(--colour-primary-100); color: var(--color-text); }
+.side .step:nth-child(3n+2) { background: var(--color-brand); color: #fff; }
+.side .step:nth-child(3n+3) { background: var(--color-brand-dark); color: #fff; }
+.side .step-num { flex-direction: column; align-items: flex-start; margin: 0; color: inherit; }
+.side .num { display: none; }
+.side .step-icon { background: rgba(255,255,255,0.16); color: #fff; }
+.side .step:nth-child(3n+1) .step-icon { background: var(--colour-white); color: var(--color-brand-dark); }
+.side .step .muted { color: inherit; }
+
+/* Timeline (feedback P9): connected nodes along a line */
+.steps.timeline { display: grid; gap: var(--space-5); position: relative; padding-left: 44px; }
+.timeline .step { position: relative; }
+.timeline .step-num { position: absolute; left: -44px; top: 0; margin: 0; }
+.timeline .num { display: none; }
+.timeline .step-icon { width: 32px; height: 32px; border-radius: 50%; background: var(--color-brand); color: #fff; box-shadow: 0 0 0 6px var(--halo, var(--colour-primary-100)); }
+.bg-muted { --halo: var(--color-surface-muted); }
+.bg-white { --halo: var(--colour-primary-100); }
+.bg-lilac { --halo: var(--colour-white); }
+.timeline .step-icon :global(svg) { font-size: 16px; }
+.timeline .step::before { content: ""; position: absolute; left: -29px; top: 34px; bottom: calc(-1 * var(--space-5)); width: 2px; background: var(--colour-primary-300); }
+.timeline .step:last-child::before { display: none; }
+@media (min-width: 1080px) {
+  .steps.timeline { grid-template-columns: repeat(var(--n), 1fr); gap: var(--space-6); padding-left: 0; padding-top: 60px; }
+  .timeline .step-num { left: 0; top: -60px; }
+  .timeline .step::before { left: 38px; right: calc(-1 * var(--space-6) - 6px); top: -45px; bottom: auto; width: auto; height: 2px; }
+}
+/* The connector draws out to the next step as each step reveals (as on v2) */
+@media (prefers-reduced-motion: no-preference) {
+  :global(html.js) .timeline .step::before { transform: scaleY(0); transform-origin: top; transition: transform 600ms var(--ease-out); transition-delay: calc(var(--i, 0) * 60ms + 300ms); }
+  :global(html.js) .timeline .step.is-in::before { transform: none; }
+  @media (min-width: 1080px) { :global(html.js) .timeline .step::before { transform: scaleX(0); transform-origin: left; } }
+}

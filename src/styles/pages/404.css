@@ -1,0 +1,3 @@
+.nf { padding: calc(var(--space-10) + 40px) 0 var(--space-10); min-height: 60vh; }
+.nf h1 { margin-bottom: var(--space-3); }
+.nf-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-6); }

@@ -1,0 +1,5 @@
+.browser { width: 100%; border-radius: var(--radius-md); overflow: hidden; background: #fff; box-shadow: 0 24px 60px rgba(3, 10, 47, 0.28), 0 0 0 1px rgba(3,10,47,0.08); }
+.browser-bar { display: flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; background: #eceff5; border-bottom: 1px solid #dfe3ec; }
+.browser-bar span { width: 9px; height: 9px; border-radius: 50%; background: #c9ceda; }
+.browser-bar i { flex: 1; margin-left: 10px; font-style: normal; font-size: 11px; color: var(--colour-grey-500); background: #fff; border-radius: 6px; padding: 3px 10px; max-width: 220px; text-align: center; }
+.browser :global(img) { display: block; width: 100%; height: auto; }

@@ -1,0 +1,19 @@
+---
+import Icon from '@/components/ui/Icon/Icon.astro';
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary' | 'ghost' | 'inverse';
+  size?: 'md' | 'lg';
+  icon?: string;
+  type?: 'button' | 'submit';
+  class?: string;
+}
+const { href, variant = 'primary', size = 'md', icon, type = 'button', class: cls = '' } = Astro.props;
+const Tag = href ? 'a' : 'button';
+---
+<Tag href={href} type={href ? undefined : type} class:list={['btn', `btn-${variant}`, `btn-${size}`, cls]}>
+  <slot />
+  {icon && <Icon name={icon} class="btn-icon" />}
+</Tag>
+
+<style>@import './Button.css';</style>

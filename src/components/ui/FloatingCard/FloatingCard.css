@@ -1,0 +1,13 @@
+.fc { background: #fff; color: var(--color-text); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); box-shadow: var(--shadow-float); width: max-content; max-width: 260px; }
+.fc-head { display: flex; gap: var(--space-3); align-items: center; }
+.fc-icon { width: 40px; height: 40px; border-radius: 12px; background: var(--color-brand-tint); color: var(--color-brand); display: grid; place-items: center; flex-shrink: 0; }
+.fc-icon :global(.material-symbols-rounded) { font-size: 22px; }
+.fc-label { font-size: 12px; color: var(--color-text-muted); font-weight: 500; }
+.fc-value { font-size: 20px; font-weight: 600; line-height: 1.2; letter-spacing: -0.01em; }
+.fc-bar { margin-top: var(--space-3); height: 8px; border-radius: 4px; background: var(--colour-primary-100); overflow: hidden; }
+.fc-bar span { display: block; height: 100%; background: var(--color-brand); border-radius: 4px; transform-origin: left; }
+/* From v2 (ring-draw): the bar fills as the card lands */
+@media (prefers-reduced-motion: no-preference) { .fc-bar span { animation: bar-fill 1400ms var(--ease-out) 900ms both; } }
+@keyframes bar-fill { from { transform: scaleX(0); } }
+.fc-note { margin-top: var(--space-2); display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--colour-positive); font-weight: 600; }
+.fc-note :global(.material-symbols-rounded) { font-size: 16px; }

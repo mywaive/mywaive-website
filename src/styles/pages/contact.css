@@ -1,0 +1,3 @@
+.contact { padding-top: 0; }
+.contact-grid { display: grid; gap: var(--space-5); align-items: start; }
+@media (min-width: 1080px) { .contact-grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--space-7); } .contact-side { position: sticky; top: 100px; } }

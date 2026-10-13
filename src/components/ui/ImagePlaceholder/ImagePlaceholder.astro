@@ -1,0 +1,16 @@
+---
+import Icon from '@/components/ui/Icon/Icon.astro';
+/**
+ * Stand-in for licensed stock photography (in scope, to be sourced).
+ * Renders a branded frame with the photo brief so the slot is obvious to reviewers.
+ * Swap for <Image> from astro:assets once photos are supplied.
+ */
+interface Props { alt: string; ratio?: string; tone?: 'light' | 'dark' | 'brand'; icon?: string; class?: string }
+const { alt, ratio = '4 / 5', tone = 'light', icon = 'person', class: cls = '' } = Astro.props;
+---
+<figure class:list={['ph', `ph-${tone}`, cls]} style={`aspect-ratio:${ratio}`} role="img" aria-label={alt}>
+  <Icon name={icon} class="ph-icon" fill />
+  <figcaption class="ph-cap" aria-hidden="true">Photo: {alt}</figcaption>
+</figure>
+
+<style>@import './ImagePlaceholder.css';</style>

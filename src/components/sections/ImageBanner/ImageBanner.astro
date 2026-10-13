@@ -1,0 +1,25 @@
+---
+/** Full-width photo card with overlaid headline and copy (feedback P5, Starling-style). */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import ImagePlaceholder from '@/components/ui/ImagePlaceholder/ImagePlaceholder.astro';
+interface Props { eyebrow?: string; headline: string; text: string; photo: string; alt: string; align?: 'left' | 'right'; accent?: 'wave' | 'cyan' | 'ruby'; tone?: 'white' | 'muted' | 'lilac' }
+const { eyebrow, headline, text, photo, alt, align = 'left', accent = 'wave', tone = 'white' } = Astro.props;
+const photos = import.meta.glob<{ default: ImageMetadata }>('/src/assets/photos/*.{png,jpg,jpeg,webp}', { eager: true });
+const match = Object.entries(photos).find(([p]) => p.replace(/^.*\//, '').replace(/\.[^.]+$/, '') === photo)?.[1].default;
+---
+<section class:list={['section', `bg-${tone}`]}>
+  <div class="container">
+    <div class:list={['banner on-dark', `align-${align}`, `accent-${accent}`]} data-reveal>
+      {match
+        ? <Image src={match} alt={alt} widths={[768, 1200, 1600]} sizes="(min-width: 1280px) 1200px, 100vw" class="banner-img" loading="lazy" decoding="async" />
+        : <ImagePlaceholder alt={alt} ratio="16 / 7" tone="dark" class="banner-img" />}
+      <div class="banner-copy">
+        {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+        <h2 class="h3">{headline}</h2>
+        <p class="lead">{text}</p>
+      </div>
+    </div>
+  </div>
+</section>
+<style>@import './ImageBanner.css';</style>

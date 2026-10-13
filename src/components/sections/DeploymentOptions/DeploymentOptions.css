@@ -1,0 +1,5 @@
+.embedded .container { padding-inline: 0; }
+.dep-head { margin-bottom: var(--space-4); }
+.dep-points { display: grid; gap: var(--space-2); margin-top: var(--space-4); }
+.dep-points li { display: flex; gap: var(--space-2); align-items: flex-start; }
+.dep-points :global(.material-symbols-rounded) { color: var(--color-brand); margin-top: 2px; }

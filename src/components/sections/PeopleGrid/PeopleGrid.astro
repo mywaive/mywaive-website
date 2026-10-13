@@ -1,0 +1,26 @@
+---
+/**
+ * Leadership and advisory board as equal square tiles on the blue band (Figma "Design updates", feedback #036).
+ */
+import { getCollection } from 'astro:content';
+import Avatar from '@/components/ui/Avatar/Avatar.astro';
+import SocialIcon from '@/components/ui/SocialIcon/SocialIcon.astro';
+interface Props { collection: 'team' | 'advisors'; headline: string; columns?: 3 | 4 | 5 }
+// columns is the desktop count; tablet steps down to 3 so a 5-up row reads 3 + 2 rather than 2 + 2 + 1.
+const { collection, headline, columns = 3 } = Astro.props;
+const people = (await getCollection(collection)).sort((a, b) => a.data.order - b.data.order);
+---
+<div class="people shape-square" style={`--cols:${columns};--cols-md:${columns === 4 ? 2 : 3}`}>
+  <h2 class="h3 people-heading" data-reveal>{headline}</h2>
+  <ul role="list" data-stagger>
+    {people.map((p) => (
+      <li data-reveal>
+        <div class="portrait" data-tilt><Avatar name={p.data.name} photo={p.data.photo} size={400} /></div>
+        <p class="name">{p.data.name}</p>
+        <p class="role">{p.data.role}</p>
+        {p.data.linkedin && <a class="linkedin" href={p.data.linkedin} rel="noopener" target="_blank" aria-label={`${p.data.name} on LinkedIn`}><SocialIcon name="linkedin" size={20} /></a>}
+      </li>
+    ))}
+  </ul>
+</div>
+<style>@import './PeopleGrid.css';</style>

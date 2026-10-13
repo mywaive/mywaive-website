@@ -1,0 +1,41 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+import HeroDark from '@/components/sections/HeroDark/HeroDark.astro';
+import FeatureList from '@/components/sections/FeatureList/FeatureList.astro';
+import ImageBanner from '@/components/sections/ImageBanner/ImageBanner.astro';
+import HowItWorks from '@/components/sections/HowItWorks/HowItWorks.astro';
+import Testimonials from '@/components/sections/Testimonials/Testimonials.astro';
+import { onboarding } from '@/data/copy';
+const benefits = [
+  { icon: 'savings', title: 'Reduces cost to serve' },
+  { icon: 'touch_app', title: 'Engages the disengaged' },
+  { icon: 'trending_up', title: 'Increases customer lifetime value' },
+  { icon: 'insights', title: 'Valuable member data insights' },
+  { icon: 'target', title: 'Consistently accurate advice' },
+  { icon: 'verified_user', title: 'FCA compliant advice, full audit trail' },
+];
+---
+<PageLayout title="myWaive for Pension Scheme Providers" description="Lower the cost of advice, grow AUM and keep members for life. myWaive gives every member personalised, regulated advice with a full audit trail." theme="light" cta={{ headline: 'Bring regulated advice to every member', sub: 'See how myWaive fits your scheme, your permissions and your member journey.', screen: 'figma-transfer-step2' }}>
+  <!-- Layout from the Figma "Design updates" file (Industry / Pension Scheme Provider, 0:832) -->
+  <HeroDark
+    tone="pink"
+    hideActions
+    headline="Personalised advice for every member"
+    sub="Targeted support only goes so far. Personalised advice and guidance for every member with an engaging user experience."
+    photo="providers-family"
+    photoRatio="1251 / 812"
+    image="A family looking at their savings together on a tablet"
+  />
+  <FeatureList eyebrow="" headline="myWaive - supporting providers to engage their members" items={benefits} tone="white" columns={3} tiles="blue-grey" />
+  <!-- Human photo instead of tags (feedback P5) -->
+  <ImageBanner
+    accent="wave"
+    headline="Engaged members are your biggest opportunity"
+    text="myWaive creates the opportunity to engage with active and deferred members in a new way. Retaining valuable deferred members and attracting new assets and contributions into your scheme. Increasing customer lifetime value."
+    photo="community-group"
+    alt="A group of friends outdoors, smiling and waving"
+  />
+  <!-- Timeline treatment (feedback P9) -->
+  <HowItWorks eyebrow="" headline="From scoping to go-live" steps={onboarding} id="onboarding" tone="white" layout="timeline" />
+  <Testimonials tone="ruby-tint" dotted feature eyebrow={false} headline="" only="provider-head-workplace-savings" />
+</PageLayout>

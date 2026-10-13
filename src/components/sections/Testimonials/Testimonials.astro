@@ -1,0 +1,42 @@
+---
+import { getCollection } from 'astro:content';
+import Icon from '@/components/ui/Icon/Icon.astro';
+import { splitWords } from '@/utils/words';
+interface Props { eyebrow?: string | false; headline?: string; audience?: 'providers' | 'corporates' | 'partners'; limit?: number; only?: string; tone?: 'dark' | 'white' | 'lilac' | 'ruby-tint'; dotted?: boolean;
+  /** One large centred quote with no card (Home, Pension providers). */
+  feature?: boolean; highlight?: string }
+const { eyebrow = false, headline = 'Trusted by the people who know pensions', audience, limit = 3, only, tone = 'dark', dotted = false, feature = false, highlight } = Astro.props;
+const parts = highlight && headline.includes(highlight) ? headline.split(highlight) : null;
+// Real quotes first, then illustrative samples.
+// `only` picks one quote by id, published or not — for a quote meant for a single page.
+let list = (await getCollection('testimonials', (t) => (only ? t.id === only : t.data.published))).sort((a, b) => a.data.order - b.data.order);
+list = [...list.filter((t) => !t.data.sample), ...list.filter((t) => t.data.sample)];
+if (audience) list = [...list.filter((t) => t.data.audience === audience), ...list.filter((t) => t.data.audience !== audience)];
+list = list.slice(0, limit);
+---
+{list.length > 0 && (
+<section class:list={['section', `bg-${tone}`, { 'on-dark': tone === 'dark', dotted, feature }]}>
+  <div class="container">
+    {(eyebrow || headline) && (
+      <div class="section-header" data-reveal>
+        {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+        {headline && <h2 class="h3">{parts ? <>{parts[0]}<span class="highlight-brand">{highlight}</span>{parts[1]}</> : headline}</h2>}
+      </div>
+    )}
+    <ul class:list={['grid', list.length === 1 ? 'one' : 'grid-3']} role="list" data-stagger>
+      {list.map((t) => (
+        <li class="quote" data-reveal={feature ? undefined : ''}>
+          {!feature && <Icon name="format_quote" size={40} class="quote-mark" fill />}
+          <blockquote>
+            {feature
+              ? <p class="h3" data-scroll-reveal>{splitWords(`“${t.data.quote}”`).map((w, i) => <>{i > 0 && ' '}<span class="sr-word">{w.map((p) => p.text)}</span></>)}</p>
+              : <p class={list.length === 1 ? 'h1' : 'lead'}>{t.data.quote}</p>}
+            <footer class="muted">{!feature && '- '}{t.data.attribution}, {t.data.organisation}</footer>
+          </blockquote>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+)}
+<style>@import './Testimonials.css';</style>

@@ -1,0 +1,28 @@
+---
+/**
+ * Google Material Symbols (Rounded) as inline SVG — no icon font, no third-party request.
+ * Outlined by default (FILL 0), `fill` for the filled variant. Sized in em, so CSS `font-size` still controls it.
+ */
+import icons from '@iconify-json/material-symbols/icons.json';
+import { getIconData, iconToSVG, replaceIDs } from '@iconify/utils';
+interface Props { name: string; label?: string; size?: number; class?: string; fill?: boolean }
+const { name, label, size, class: cls = '', fill = false } = Astro.props;
+const k = name.replace(/_/g, '-');
+const order = fill ? [`${k}-rounded`, k] : [`${k}-outline-rounded`, `${k}-rounded`, k];
+const data = order.map((n) => getIconData(icons as any, n)).find(Boolean);
+if (!data) throw new Error(`Icon "${name}" not found in Material Symbols`);
+const svg = iconToSVG(data, { height: '1em', width: '1em' });
+const body = replaceIDs(svg.body);
+---
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox={svg.attributes.viewBox}
+  width="1em" height="1em"
+  class={`material-symbols-rounded ${cls}`}
+  style={size ? `font-size:${size}px` : undefined}
+  aria-hidden={label ? undefined : 'true'}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  focusable="false"
+  set:html={body}
+/>

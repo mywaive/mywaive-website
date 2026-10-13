@@ -1,0 +1,106 @@
+/* ---------- Reveal on scroll (fires once, see src/scripts/reveal.ts; same as v2) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-reveal] { opacity: 0; transform: translateY(var(--reveal-y, 20px)); transition: opacity var(--dur-reveal) var(--ease-out), transform var(--dur-reveal) var(--ease-out); transition-delay: calc(var(--i, 0) * 60ms); }
+  html.js [data-reveal].is-in { opacity: 1; transform: none; }
+}
+/* Reduced motion: keep the fade, drop the movement */
+@media (prefers-reduced-motion: reduce) {
+  html.js [data-reveal] { opacity: 0; transition: opacity 300ms ease; }
+  html.js [data-reveal].is-in { opacity: 1; }
+}
+
+/* ---------- React Bits BlurText (ported): hero headline words blur into focus, once on load ---------- */
+.bt-word { display: inline-block; }
+@media (prefers-reduced-motion: no-preference) {
+  .bt-word { animation: blur-in 700ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 90ms); }
+}
+@keyframes blur-in {
+  0% { filter: blur(10px); opacity: 0; transform: translateY(-0.4em); }
+  50% { filter: blur(5px); opacity: 0.5; transform: translateY(0.06em); }
+  100% { filter: blur(0); opacity: 1; transform: none; }
+}
+
+/* ---------- React Bits SpotlightCard / TiltedCard / Magnet (ported; behaviour in src/scripts/effects.ts) ---------- */
+[data-spotlight] { position: relative; isolation: isolate; overflow: hidden; }
+.magnet { display: inline-block; }
+@media (max-width: 599px) { .hero-actions .magnet { flex: 1 1 100%; } .magnet .btn { width: 100%; } }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  [data-spotlight]::after {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.12), transparent 70%);
+    opacity: 0; transition: opacity 300ms var(--ease-out);
+  }
+  [data-spotlight="light"]::after { background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), rgba(9, 102, 255, 0.1), transparent 70%); }
+  [data-spotlight]:hover::after { opacity: 1; }
+  /* A transition on each pointer move retargets smoothly — the spring-like follow of TiltedCard */
+  [data-tilt] { transition: transform 400ms var(--ease-out); }
+  /* Magnet: quick to follow (300ms ease-out), slower to let go (500ms ease-in-out) */
+  .magnet { transition: transform 500ms var(--ease-in-out); }
+  .magnet.is-near { transition: transform 300ms var(--ease-out); }
+}
+
+/* ---------- React Bits StarBorder (ported to CSS): a light laps the button edge ----------
+   Three laps after load, then again while hovered — not an endless loop beside the content. */
+@property --star-angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+.star-border { position: relative; display: inline-flex; padding: 2px; border-radius: var(--radius-pill); isolation: isolate; }
+.star-border > * { position: relative; z-index: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  .star-border::before {
+    content: ""; position: absolute; inset: 0; z-index: 0; border-radius: inherit; pointer-events: none; opacity: 0;
+    background: conic-gradient(from var(--star-angle), transparent 0 68%, var(--colour-electric-cyan) 84%, #fff 88%, transparent 96%);
+    animation: star-laps 7.2s linear 1.4s;
+  }
+  .star-border:hover::before { opacity: 1; animation: star-lap 2.4s linear infinite; }
+}
+@keyframes star-laps { 0% { --star-angle: 0deg; opacity: 0; } 5% { opacity: 1; } 92% { opacity: 1; } 100% { --star-angle: 1080deg; opacity: 0; } }
+@keyframes star-lap { to { --star-angle: 360deg; } }
+
+/* ---------- React Bits DotGrid (ported): the dotted sections' dots react to the pointer ----------
+   effects.ts draws the same 18px dot pattern on a canvas and only then drops the CSS dots. */
+.dotgrid-on { background-image: none !important; position: relative; isolation: isolate; }
+.dotgrid-canvas { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+
+/* ---------- React Bits ShinyText (ported): one shine across the hero highlight after the words land ----------
+   currentColor keeps each hero's own highlight colour; the band is the only change. */
+@supports ((background-clip: text) or (-webkit-background-clip: text)) {
+  @media (prefers-reduced-motion: no-preference) {
+    .blur-text .highlight, .blur-text .highlight-ruby {
+      -webkit-text-fill-color: transparent;
+      /* 300% wide and kept within 0–100%, so the gradient always covers the whole word; only the band travels */
+      background: linear-gradient(110deg, currentColor 0 44%, rgba(255, 255, 255, 0.95) 50%, currentColor 56% 100%) 100% 0 / 300% 100% no-repeat;
+      -webkit-background-clip: text; background-clip: text;
+      animation: shine 1400ms var(--ease-in-out) 1100ms both;
+    }
+  }
+}
+@keyframes shine { from { background-position: 100% 0; } to { background-position: 0% 0; } }
+
+/* ---------- From v2: page transitions + smooth in-page scroll ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  html:focus-within { scroll-behavior: smooth; }
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root) { animation: vt-out 180ms var(--ease-out) both; }
+  ::view-transition-new(root) { animation: vt-in 280ms var(--ease-out) both; }
+}
+@keyframes vt-out { to { opacity: 0; } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(10px); } }
+
+/* ---------- From v2 (PillarScrub): a heading's words light up as it scrolls through the viewport ----------
+   CSS scroll-driven; unsupported browsers and reduced motion get the finished heading.
+   Unlit words are #878fb0 — 3.2:1 on white, so the heading stays AA large text throughout. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .scrub-word {
+      /* Longhands on purpose: the minifier folds a shorthand + animation-timeline into
+         one shorthand Chrome rejects, which silently drops the whole animation */
+      animation-name: scrub-light;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-duration: auto;
+      animation-timeline: view();
+      animation-range: entry calc(30% + var(--i) * 50% / var(--n)) cover calc(30% + var(--i) * 25% / var(--n));
+    }
+  }
+}
+@keyframes scrub-light { from { color: #878fb0; } }
+

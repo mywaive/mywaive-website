@@ -1,0 +1,16 @@
+---
+import { splitWords } from '@/utils/words';
+interface Props { eyebrow?: string; headline: string; highlight?: string; highlightColor?: 'brand' | 'ruby'; sub?: string; short?: boolean }
+const { eyebrow, headline, highlight, highlightColor = 'brand', sub, short = false } = Astro.props;
+---
+<section class:list={['hero-light bg-tint on-light', { short }]}>
+  <div class="container">
+    <div class="hero-light-copy">
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h1 class="h4 blur-text">{splitWords(headline, highlight).map((word, i) => <>{i > 0 && ' '}<span class="bt-word" style={`--i:${i}`}>{word.map((p) => p.highlight ? <span class:list={[highlightColor === 'ruby' ? 'highlight-ruby' : 'highlight']}>{p.text}</span> : p.text)}</span></>)}</h1>
+      {sub && <p class="lead muted">{sub}</p>}
+    </div>
+    <slot />
+  </div>
+</section>
+<style>@import './HeroLight.css';</style>

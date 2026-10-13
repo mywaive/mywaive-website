@@ -1,0 +1,42 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+import HeroDark from '@/components/sections/HeroDark/HeroDark.astro';
+import PillarStrip from '@/components/sections/PillarStrip/PillarStrip.astro';
+import HowItWorks from '@/components/sections/HowItWorks/HowItWorks.astro';
+import FeatureTabs from '@/components/sections/FeatureTabs/FeatureTabs.astro';
+import DeploymentOptions from '@/components/sections/DeploymentOptions/DeploymentOptions.astro';
+import TrustGrid from '@/components/sections/TrustGrid/TrustGrid.astro';
+import Roadmap from '@/components/sections/Roadmap/Roadmap.astro';
+import { onboarding } from '@/data/copy';
+---
+<PageLayout title="The myWaive platform" description="How myWaive works: personalised, regulated pension advice delivered end to end - features, deployment options, security and compliance." cta={{ headline: 'See the platform live', sub: 'A walkthrough of myWaive, configured for your scheme or workforce.' }}>
+  <!-- Layout from the Figma "Design updates" file (Product Page, 0:856) -->
+  <HeroDark
+    tone="white"
+    hideActions
+    headline="Putting regulated financial advice within reach of everyday savers"
+    highlight="everyday savers"
+    desktopScreen="figma-transfer-step2"
+    image="myWaive desktop app - reviewing a pension transfer against the current provider"
+  />
+  <FeatureTabs eyebrow="" headline="Giving people greater confidence and control over their financial future" />
+  <!-- Deployment and onboarding share one white panel on a dotted mint field -->
+  <section class="section bg-mint-bright dotted">
+    <div class="container">
+      <div class="panel deploy-panel">
+        <DeploymentOptions embedded />
+        <HowItWorks embedded eyebrow="" headline="From scoping to go-live" steps={onboarding} id="how-it-works" layout="timeline" />
+      </div>
+    </div>
+  </section>
+  <PillarStrip items={[
+    { title: 'Low cost', colour: '#81b4fc', photo: 'laptop-cafe', alt: 'A saver checking their pension on a laptop in a café' },
+    { title: 'Better decisions', colour: '#c5b1f9', photo: 'woman-laptop-outdoor', alt: 'A woman reviewing her finances on a laptop outdoors' },
+    { title: 'Always-on', colour: '#96fce4', photo: 'providers-hero', alt: 'A man reviewing a recommendation on a tablet' },
+    { title: 'Stronger retirement', colour: '#ffb1d1', photo: 'about-why', alt: 'A retiree reviewing paperwork with his adult daughter' },
+  ]} />
+  <TrustGrid headline="Built for data-centric, regulated environments" intro="myWaive is designed to operate in a regulated environment, with a complete audit trail behind every recommendation." />
+  <Roadmap />
+</PageLayout>
+
+<style>@import '../styles/pages/product.css';</style>

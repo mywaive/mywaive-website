@@ -1,0 +1,31 @@
+---
+import { howItWorks } from '@/data/copy';
+import Icon from '@/components/ui/Icon/Icon.astro';
+import Button from '@/components/ui/Button/Button.astro';
+interface Props { eyebrow?: string; headline?: string; intro?: string; steps?: typeof howItWorks; id?: string; link?: { label: string; href: string }; tone?: 'white' | 'muted' | 'dark' | 'lilac'; layout?: 'row' | 'side' | 'timeline'; embedded?: boolean }
+const { eyebrow = 'How it works', headline = 'From integration to ongoing advice in four steps', intro, steps = howItWorks, id = 'how-it-works', link, tone = 'white', layout = 'row', embedded = false } = Astro.props;
+const Wrapper = embedded ? 'div' : 'section';
+---
+<Wrapper class:list={[embedded ? 'embedded' : 'section', !embedded && `bg-${tone}`, `layout-${layout}`, { 'on-dark': tone === 'dark' }]} id={id}>
+  <div class:list={['container', { 'side-grid': layout === 'side' }]}>
+    <div class="section-header" data-reveal>
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h2 class="h3">{headline}</h2>
+      {intro && <p class="lead muted">{intro}</p>}
+      {link && layout === 'side' && <div class="hiw-link"><Button href={link.href} variant="secondary" icon="arrow_forward">{link.label}</Button></div>}
+    </div>
+    <ol class:list={['steps', layout]} role="list" style={`--n:${steps.length}`} data-stagger>
+      {steps.map((s, i) => (
+        <li class="step" data-reveal>
+          <div class="step-num"><span class="num">{String(i + 1).padStart(2, '0')}</span><span class="icon-tile step-icon"><Icon name={s.icon} size={22} /></span></div>
+          <div class="step-body">
+            <h3 class="h0">{s.title}</h3>
+            <p class="muted">{s.text}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+    {link && layout !== 'side' && <div class="hiw-link"><Button href={link.href} variant="secondary" icon="arrow_forward">{link.label}</Button></div>}
+  </div>
+</Wrapper>
+<style>@import './HowItWorks.css';</style>

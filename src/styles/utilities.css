@@ -1,0 +1,98 @@
+/* Surfaces */
+.bg-white { background-color: var(--color-surface); color: var(--color-text); }
+.bg-muted { background-color: var(--color-surface-muted); color: var(--color-text); }
+.bg-tint { background-color: var(--color-surface-tint); color: var(--color-text); }
+.bg-brand { background-color: var(--color-brand); color: var(--color-text-inverse); }
+.bg-brand-dark { background-color: var(--color-brand-dark); color: var(--color-text-inverse); }
+.bg-dark { background-color: var(--color-surface-dark); color: var(--color-text-inverse); }
+.bg-teal { background-color: var(--colour-deep-teal); color: var(--color-text-inverse); }
+.bg-mint { background-color: var(--colour-mint); color: var(--color-text); }
+.bg-mint-bright { background-color: var(--colour-mint-bright); color: var(--color-text); }
+.bg-pink { background-color: var(--colour-electric-ruby-400); color: var(--color-text); }
+/* Dot texture used on the board's lilac and mint panels */
+.dotted { background-image: radial-gradient(var(--dot, rgba(9, 102, 255, 0.16)) 1.5px, transparent 1.6px); background-size: 18px 18px; }
+/* White panel sitting on a tinted section */
+.panel { background: var(--colour-white); border-radius: var(--radius-lg); padding: clamp(var(--space-5), 3vw, var(--space-8)); }
+.bg-lilac { background-color: var(--colour-primary-100); color: var(--color-text); }
+.bg-lilac-strong { background-color: var(--colour-primary-300); color: var(--colour-ink); }
+.bg-lilac .card, .bg-lilac-strong .card { border-color: transparent; }
+.bg-lilac .icon-tile { background: var(--colour-white); }
+.bg-lilac .eyebrow, .bg-lilac-strong .eyebrow { color: var(--colour-primary-800); }
+
+/* Electric Ruby: tint surface for small text, full block for headlines (white on Ruby is large-text only per the accessibility board) */
+.bg-ruby-tint { background-color: var(--colour-electric-ruby-100); color: var(--color-text); }
+.bg-ruby-tint .eyebrow { color: var(--colour-electric-ruby-800); }
+.bg-ruby-tint .icon-tile { background: var(--colour-white); color: var(--colour-electric-ruby-800); }
+/* ...but a tile sitting on a white card inside a tinted section needs its tint back, or it disappears */
+.bg-lilac .card .icon-tile, .bg-lilac .feat .icon-tile { background: var(--color-brand-tint); }
+.bg-ruby-tint .card .icon-tile, .bg-ruby-tint .feat .icon-tile { background: var(--colour-electric-ruby-100); }
+.bg-ruby-tint .card { border-color: transparent; }
+.bg-ruby { background-color: var(--colour-electric-ruby); color: var(--colour-electric-ruby-900); }
+.bg-ruby h1, .bg-ruby h2, .bg-ruby h3 { color: var(--colour-white); }
+.bg-ruby .eyebrow { color: var(--colour-electric-ruby-900); }
+.bg-ruby .muted { color: var(--colour-electric-ruby-900); }
+.highlight-ruby { color: var(--colour-electric-ruby-800); }
+.on-dark .highlight-ruby { color: var(--colour-electric-ruby-400); }
+
+/* Bullet list (replaces pills where a plain list reads better) */
+.bullets { display: grid; gap: var(--space-2); margin-top: var(--space-5); padding: 0; }
+.bullets li { display: flex; gap: var(--space-3); align-items: flex-start; font-weight: 500; }
+.bullets li::before { content: ""; flex: 0 0 10px; width: 10px; height: 10px; border-radius: 50%; background: currentColor; margin-top: 0.5em; opacity: 0.9; }
+
+/* Eyebrow */
+.eyebrow {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  font-size: var(--type-small); font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.04em; text-transform: uppercase; color: var(--colour-primary-darker);
+  margin-bottom: var(--space-3);
+}
+.eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.on-dark .eyebrow { color: var(--color-accent); }
+.bg-brand .eyebrow { color: var(--colour-white); }
+
+/* Grid */
+.grid { display: grid; gap: var(--space-4); }
+.grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+@media (min-width: 600px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1080px) { .grid-3 { grid-template-columns: repeat(3, 1fr); } .grid-4 { grid-template-columns: repeat(4, 1fr); } }
+
+/* Card */
+.card {
+  background: var(--color-surface); color: var(--color-text);
+  border: 1px solid var(--color-border); border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+.card h3 { margin-bottom: var(--space-2); }
+.card p { color: var(--color-text-muted); }
+
+/* Material Symbols */
+.material-symbols-rounded { font-size: 24px; width: 1em; height: 1em; display: inline-block; vertical-align: middle; flex-shrink: 0; fill: currentColor; }
+.icon-tile {
+  width: 56px; height: 56px; border-radius: var(--radius-md);
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--color-brand-tint); color: var(--color-brand);
+}
+.icon-tile .material-symbols-rounded { font-size: 28px; }
+.on-dark .icon-tile { background: rgba(255,255,255,0.08); color: var(--colour-primary-300); }
+.bg-brand .icon-tile { background: rgba(255,255,255,0.14); color: var(--colour-white); }
+
+/* Accessibility helpers */
+.visually-hidden { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.skip-link { position: absolute; top: -100px; left: var(--space-3); z-index: 1000; background: var(--color-brand); color: #fff; padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); font-weight: 600; }
+.skip-link:focus { top: var(--space-3); }
+
+/* Prose (legal + long copy) */
+.prose { max-width: var(--prose); }
+.prose h2 { font-size: var(--type-h1); margin-top: var(--space-7); margin-bottom: var(--space-3); scroll-margin-top: 110px; }
+.prose h3 { font-size: var(--type-h0); margin-top: var(--space-5); margin-bottom: var(--space-2); }
+.prose p, .prose ul, .prose ol { margin-bottom: var(--space-3); }
+.prose ul, .prose ol { padding-left: 1.4em; }
+.prose a { color: var(--color-brand); }
+.prose strong { font-weight: var(--font-weight-semibold); }
+.prose table { width: 100%; border-collapse: collapse; margin: var(--space-4) 0 var(--space-5); font-size: var(--type-small); }
+.prose th, .prose td { text-align: left; vertical-align: top; padding: 12px 14px; border-bottom: 1px solid var(--color-border); }
+.prose th { background: var(--color-surface-tint); font-weight: var(--font-weight-semibold); border-bottom-color: var(--colour-primary-100); }
+.prose tr:last-child td { border-bottom: 0; }
+.prose code { font-size: 0.9em; background: var(--color-surface-tint); padding: 1px 6px; border-radius: 4px; }
+@media (max-width: 599px) { .prose table { display: block; overflow-x: auto; } .prose th, .prose td { padding: 10px; min-width: 140px; } }
+

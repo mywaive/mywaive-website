@@ -1,0 +1,38 @@
+---
+/** Template T6: title bar + in-page TOC + prose. */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Icon from '@/components/ui/Icon/Icon.astro';
+interface Props { title: string; description: string; lastUpdated: Date; headings: { depth: number; slug: string; text: string }[]; status?: 'placeholder' | 'draft' | 'final' }
+const { title, description, lastUpdated, headings, status = 'final' } = Astro.props;
+const toc = headings.filter((h) => h.depth === 2);
+const dateStr = lastUpdated.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+<BaseLayout title={title} description={description} theme="light">
+  <section class="legal-title bg-tint">
+    <div class="container">
+      <h1 class="h3">{title}</h1>
+      <p class="muted">Last updated: <time datetime={lastUpdated.toISOString().slice(0, 10)}>{dateStr}</time></p>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container legal-grid">
+      {toc.length > 1 && (
+        <nav class="toc" aria-label="On this page">
+          <h2 class="small toc-h">On this page</h2>
+          <ol role="list">{toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol>
+        </nav>
+      )}
+      <article class="prose">
+        {status === 'placeholder' && (
+          <p class="notice"><Icon name="info" /> This page is a placeholder until the final wording is approved.</p>
+        )}
+        {status === 'draft' && (
+          <p class="notice"><Icon name="draft" /> Draft prepared for legal review. Wording is not final until approved by Waive's legal advisers.</p>
+        )}
+        <slot />
+      </article>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>@import './LegalLayout.css';</style>

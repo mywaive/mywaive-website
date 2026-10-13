@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://www.mywaive.io/sitemap-index.xml

@@ -1,0 +1,29 @@
+---
+/** Compact feature grid (subset) for audience pages. */
+import { features } from '@/data/copy';
+import Icon from '@/components/ui/Icon/Icon.astro';
+interface Props { eyebrow?: string; headline: string; intro?: string; include?: number[]; items?: { icon: string; title: string; text?: string }[]; tone?: 'white' | 'muted' | 'dark' | 'lilac'; columns?: 2 | 3 | 4;
+  /** Blue-grey cards with white icon tiles (Pension providers) */
+  tiles?: 'blue-grey' }
+const { eyebrow = 'What you get', headline, intro, include, items, tone = 'white', columns = 3, tiles } = Astro.props;
+const list = items ?? (include ? include.map((i) => features[i]) : features);
+---
+<section class:list={['section', `bg-${tone}`, { 'on-dark': tone === 'dark' }]}>
+  <div class="container">
+    <div class="section-header" data-reveal>
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h2 class="h3">{headline}</h2>
+      {intro && <p class="lead muted">{intro}</p>}
+    </div>
+    <ul class:list={['grid', `grid-${columns}`, tiles && `tiles-${tiles}`]} role="list" data-stagger>
+      {list.map((f) => (
+        <li class="feat tile-compact" data-reveal data-spotlight="light">
+          <span class="icon-tile"><Icon name={f.icon} /></span>
+          <h3 class="h0">{f.title}</h3>
+          {f.text && <p class="muted">{f.text}</p>}
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+<style>@import './FeatureList.css';</style>

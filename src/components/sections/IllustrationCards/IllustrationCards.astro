@@ -1,0 +1,39 @@
+---
+import { Image } from 'astro:assets';
+/**
+ * "Why choose myWaive" — solid colour cards from the Figma About wireframe (66:6747).
+ * Title and copy sit at the top; the line-art illustration fills the bottom and bleeds
+ * to the card edge. Colours sampled from the board.
+ */
+interface Card { illustration: string; title: string; text?: string; colour: string }
+interface Props { eyebrow?: string | false; headline: string; intro?: string; cards: Card[]; tone?: 'white' | 'muted' | 'mint-bright'; dotted?: boolean }
+const { eyebrow = false, headline, intro, cards, tone = 'white', dotted = false } = Astro.props;
+const art = import.meta.glob<{ default: ImageMetadata }>('/src/assets/illustrations/*.{svg,png}', { eager: true });
+const src = (name: string) => Object.entries(art).find(([p]) => p.replace(/^.*\//, '').replace(/\.[^.]+$/, '') === name)?.[1].default;
+---
+<section class:list={['section', `bg-${tone}`, { dotted }]}>
+  <div class="container">
+    <div class="section-header" data-reveal>
+      {eyebrow !== false && <p class="eyebrow">{eyebrow}</p>}
+      <h2 class="h3">{headline}</h2>
+      {intro && <p class="lead muted">{intro}</p>}
+    </div>
+    <ul class:list={['grid', cards.length === 3 ? 'grid-3' : 'grid-4']} role="list" data-stagger>
+      {cards.map((c) => (
+        <li class="ic" style={`--card: ${c.colour}`} data-reveal>
+          <div class="ic-copy">
+            <h3 class="h1">{c.title}</h3>
+            {c.text && <p>{c.text}</p>}
+          </div>
+          <div class="ic-art">
+            {/* SVG line art scales as is; a raster illustration gets resized WebP + srcset */}
+            {src(c.illustration)?.format === 'svg'
+              ? <img src={src(c.illustration)!.src} alt="" width="600" height="600" loading="lazy" decoding="async" />
+              : <Image src={src(c.illustration)!} alt="" widths={[340, 676]} sizes="(min-width: 1080px) 25vw, (min-width: 600px) 50vw, 90vw" loading="lazy" />}
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+<style>@import './IllustrationCards.css';</style>

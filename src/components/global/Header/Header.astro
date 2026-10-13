@@ -1,0 +1,49 @@
+---
+import { nav, cta } from '@/data/site';
+import Button from '@/components/ui/Button/Button.astro';
+import Logo from '@/components/global/Logo/Logo.astro';
+import Icon from '@/components/ui/Icon/Icon.astro';
+interface Props { theme?: 'dark' | 'light' }
+const { theme = 'light' } = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (href: string) => path === href || (href !== '/' && path.startsWith(href.split('#')[0]));
+---
+<header class:list={['site-header', `theme-${theme}`]} data-header>
+  <div class="container header-inner">
+    <Logo variant="black" class="logo-light" height={34} />
+    <Logo variant="white" class="logo-dark" height={34} />
+
+    <nav class="primary-nav" aria-label="Primary" id="primary-nav">
+      <ul role="list">
+        {nav.map((item) => item.children ? (
+          <li class="has-children" data-dropdown>
+            <button type="button" class:list={['nav-link', { active: item.children.some((c) => isActive(c.href)) }]} aria-expanded="false" aria-controls="menu-industries">
+              {item.label}<Icon name="expand_more" class="chev" />
+            </button>
+            <ul id="menu-industries" class="dropdown" role="list">
+              {item.children.map((c) => (
+                <li><a href={c.href} class:list={{ active: isActive(c.href) }} aria-current={isActive(c.href) ? 'page' : undefined}><span class="dd-label">{c.label}</span>{c.desc && <span class="dd-desc">{c.desc}</span>}</a></li>
+              ))}
+            </ul>
+          </li>
+        ) : (
+          <li><a href={item.href} class:list={['nav-link', { active: isActive(item.href) }]} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a></li>
+        ))}
+      </ul>
+      <div class="nav-cta"><Button href={cta.primary.href} variant="primary">{cta.primary.label}</Button></div>
+    </nav>
+
+    <div class="header-actions">
+      <span class="star-border header-cta-wrap"><Button href={cta.primary.href} variant="primary" class="header-cta">{cta.primary.label}</Button></span>
+      <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="primary-nav" data-menu-toggle>
+        <Icon name="menu" class="icon-open" />
+        <Icon name="close" class="icon-close" />
+        <span class="visually-hidden">Menu</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>@import './Header.css';</style>
+
+<script>import './Header.ts';</script>

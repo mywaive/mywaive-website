@@ -1,0 +1,51 @@
+---
+import { site, industries, legalPages, cta } from '@/data/site';
+import Logo from '@/components/global/Logo/Logo.astro';
+import SocialIcon from '@/components/ui/SocialIcon/SocialIcon.astro';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer on-dark">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <Logo variant="white" height={40} />
+        <p class="muted">{site.tagline}</p>
+        <ul class="social" role="list" aria-label="Social links">
+          {site.social.map((s) => (
+            <li><a href={s.href} rel="noopener" target="_blank" aria-label={`${site.name} on ${s.label}`}>
+              <SocialIcon name={s.icon} />
+            </a></li>
+          ))}
+        </ul>
+      </div>
+      <nav aria-label="Company">
+        <h2 class="footer-h">Company</h2>
+        <ul role="list">
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact Us</a></li>
+          <li><a href={cta.primary.href}>{cta.primary.label}</a></li>
+        </ul>
+      </nav>
+      <nav aria-label="For Industries">
+        <h2 class="footer-h">For Industries</h2>
+        <ul role="list">{industries.map((i) => <li><a href={i.href}>{i.fullLabel}</a></li>)}</ul>
+      </nav>
+      <nav aria-label="Product">
+        <h2 class="footer-h">Product</h2>
+        <ul role="list">
+          <li><a href="/product">myWaive Product</a></li>
+          <li><a href="/product#how-it-works">How it works</a></li>
+          <li><a href="/product#deployment">Deployment options</a></li>
+          <li><a href="/product#trust">Security &amp; compliance</a></li>
+        </ul>
+      </nav>
+    </div>
+    <p class="small regulatory">{site.regulatoryStatement} {site.companies.map((c) => `${c.name} (company no. ${c.number})`).join(' and ')} are registered in England and Wales at {site.registeredOffice}.</p>
+    <div class="footer-bottom">
+      <p class="small">© {year} {site.company}. All rights reserved.</p>
+      <nav aria-label="Legal"><ul role="list" class="legal-links">{legalPages.map((l) => <li><a href={l.href} class="small">{l.label}</a></li>)}</ul></nav>
+    </div>
+  </div>
+</footer>
+
+<style>@import './Footer.css';</style>

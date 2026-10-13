@@ -1,0 +1,24 @@
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  font-weight: var(--font-weight-semibold); text-decoration: none; white-space: nowrap;
+  border-radius: var(--radius-pill); border: 2px solid transparent;
+  transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease), border-color var(--dur) var(--ease), transform var(--dur) var(--ease);
+  min-height: 48px; padding: 0 var(--space-4);
+}
+.btn-lg { min-height: 56px; padding: 0 var(--space-5); font-size: 1.0625rem; }
+.btn :global(.btn-icon) { font-size: 20px; transition: transform var(--dur) var(--ease); }
+.btn:hover :global(.btn-icon) { transform: translateX(3px); }
+.btn:active { transform: translateY(1px); }
+
+.btn-primary { background: var(--color-brand); color: #fff; }
+.btn-primary:hover { background: var(--color-brand-dark); }
+
+.btn-secondary { background: transparent; color: var(--colour-primary-darker); border-color: var(--colour-primary-darker); }
+.btn-secondary:hover { background: var(--color-brand-tint); }
+
+.btn-inverse { background: #fff; color: var(--color-brand-dark); }
+.btn-inverse:hover { background: var(--color-brand-tint); }
+
+.btn-ghost { background: transparent; color: inherit; border-color: currentColor; }
+.btn-ghost:hover { background: rgba(255,255,255,0.1); }
+:global(.on-light) .btn-ghost:hover { background: rgba(0,0,0,0.05); }

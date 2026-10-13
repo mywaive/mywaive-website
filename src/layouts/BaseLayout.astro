@@ -1,0 +1,64 @@
+---
+import '@fontsource-variable/dm-sans/opsz.css';
+import '@/styles/global.css';
+import Header from '@/components/global/Header/Header.astro';
+import Footer from '@/components/global/Footer/Footer.astro';
+import CookieBanner from '@/components/global/CookieBanner/CookieBanner.astro';
+import { site } from '@/data/site';
+
+interface Props { title: string; description?: string; theme?: 'dark' | 'light'; ogImage?: string; noindex?: boolean }
+const { title, description = site.description, theme = 'light', ogImage = '/og-default.png', noindex = false } = Astro.props;
+// Keep Vercel preview deployments out of search results.
+const isPreview = !!process.env.VERCEL_ENV && process.env.VERCEL_ENV !== 'production';
+const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', Astro.site ?? site.domain);
+const fullTitle = title === site.name ? `${site.name} - Regulated financial advice for everyone` : `${title} | ${site.name}`;
+---
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {(noindex || isPreview) && <meta name="robots" content="noindex" />}
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#0966FF" />
+    <!-- Blocking and same-origin (CSP): tags <html> with `js` before first paint so reveals can start hidden -->
+    <script is:inline src="/js/flag.js"></script>
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/logo/app-icon-webclip.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(ogImage, Astro.site ?? site.domain)} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: site.company,
+      alternateName: site.name,
+      url: site.domain,
+      logo: `${site.domain}/logo/app-icon-webclip.svg`,
+      email: site.hello,
+      sameAs: site.social.map((s) => s.href),
+    })} />
+  </head>
+  <body class:list={[theme === 'dark' ? 'page-dark' : 'page-light']}>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header theme={theme} />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <CookieBanner />
+    <script>import './BaseLayout.ts';</script>
+  </body>
+</html>

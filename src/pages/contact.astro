@@ -1,0 +1,18 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+import HeroLight from '@/components/sections/HeroLight/HeroLight.astro';
+import ContactForm from '@/components/sections/ContactForm/ContactForm.astro';
+import ContactDetails from '@/components/sections/ContactDetails/ContactDetails.astro';
+---
+<PageLayout title="Book a demo" description="Request a myWaive demo. Tell us about your requirements, and we’ll tailor a walkthrough of our solution." cta={false}>
+  <HeroLight headline="Book a demo" sub="Tell us about your requirements, and we’ll tailor a walkthrough of our solution." short />
+  <section class="section bg-tint contact">
+    <div class="container contact-grid">
+      <ContactForm />
+      <div class="contact-side">
+        <ContactDetails />
+      </div>
+    </div>
+  </section>
+</PageLayout>
+<style>@import '../styles/pages/contact.css';</style>

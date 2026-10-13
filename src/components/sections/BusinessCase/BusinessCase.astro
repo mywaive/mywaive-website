@@ -1,0 +1,24 @@
+---
+import Icon from '@/components/ui/Icon/Icon.astro';
+interface Props { eyebrow?: string; headline: string; intro?: string; columns: { icon: string; title: string; points: string[] }[]; tone?: 'white' | 'muted' }
+const { eyebrow = 'The business case', headline, intro, columns, tone = 'white' } = Astro.props;
+---
+<section class:list={['section', `bg-${tone}`]}>
+  <div class="container">
+    <div class="section-header" data-reveal>
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h2 class="h3">{headline}</h2>
+      {intro && <p class="lead muted">{intro}</p>}
+    </div>
+    <div class="grid grid-3" data-stagger>
+      {columns.map((c) => (
+        <article class="bc" data-reveal>
+          <span class="icon-tile"><Icon name={c.icon} /></span>
+          <h3 class="h1">{c.title}</h3>
+          <ul role="list">{c.points.map((p) => <li><Icon name="check" size={20} />{p}</li>)}</ul>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+<style>@import './BusinessCase.css';</style>

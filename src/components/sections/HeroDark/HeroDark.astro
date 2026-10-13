@@ -1,0 +1,56 @@
+---
+/** Dark full-bleed hero: headline + CTAs, human photo anchor, floating UI cards. */
+import Button from '@/components/ui/Button/Button.astro';
+import ImagePlaceholder from '@/components/ui/ImagePlaceholder/ImagePlaceholder.astro';
+import Photo from '@/components/ui/Photo/Photo.astro';
+import type { ImageMetadata } from 'astro';
+import FloatingCard from '@/components/ui/FloatingCard/FloatingCard.astro';
+import PhoneFrame from '@/components/ui/PhoneFrame/PhoneFrame.astro';
+import BrowserFrame from '@/components/ui/BrowserFrame/BrowserFrame.astro';
+import { splitWords } from '@/utils/words';
+interface Card { icon: string; label: string; value: string; note?: string; progress?: number }
+interface Props {
+  eyebrow?: string; headline: string; highlight?: string; sub?: string;
+  primary?: { label: string; href: string }; secondary?: { label: string; href: string };
+  image?: string; imageIcon?: string; screen?: string; photo?: string; cards?: Card[]; compact?: boolean;
+  accent?: 'wave' | 'cyan' | 'ruby';
+  /** 'dark' (default), or a light hero: 'lilac' (Primary 100), 'light' (brilliant white, brand-blue headline), 'pink' or 'white'. */
+  tone?: 'dark' | 'lilac' | 'light' | 'pink' | 'white';
+  /** Hide the CTA buttons (feedback P2). */
+  hideActions?: boolean;
+  photoRatio?: string;
+  /** Desktop product screen (src/assets/screens/desktop-*.png) shown in a browser frame instead of a phone. */
+  desktopScreen?: string;
+}
+const { eyebrow, headline, highlight, sub, primary = { label: 'Book a demo', href: '/contact' }, secondary, image, imageIcon = 'person', screen, photo, cards = [], compact = false, accent = 'wave', tone = 'dark', hideActions = false, photoRatio = '4 / 5', desktopScreen } = Astro.props;
+const photos = import.meta.glob<{ default: ImageMetadata }>('/src/assets/photos/*.{png,jpg,jpeg,webp}', { eager: true });
+const hasPhoto = !!photo && Object.keys(photos).some((p) => p.replace(/^.*\//, '').replace(/\.[^.]+$/, '') === photo);
+---
+<section class:list={['hero', tone === 'dark' ? 'bg-dark on-dark' : `${{ lilac: 'bg-lilac', light: 'bg-tint', pink: 'bg-pink', white: 'bg-white' }[tone]} on-light tone-lilac tone-${tone}`, `accent-${accent}`, { compact }]}>
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h1 class="h4 blur-text">{splitWords(headline, highlight).map((word, i) => <>{i > 0 && ' '}<span class="bt-word" style={`--i:${i}`}>{word.map((p) => p.highlight ? <span class="highlight">{p.text}</span> : p.text)}</span></>)}</h1>
+      {sub && <p class="lead muted">{sub}</p>}
+      {!hideActions && (
+        <div class="hero-actions">
+          <span class="magnet" data-magnet><Button href={primary.href} size="lg" icon="arrow_forward">{primary.label}</Button></span>
+          {secondary && <Button href={secondary.href} size="lg" variant="ghost">{secondary.label}</Button>}
+        </div>
+      )}
+    </div>
+    <div class:list={['hero-visual', { 'has-screen': !!screen, wide: !!desktopScreen && !hasPhoto }]}>
+      {desktopScreen && !hasPhoto
+        ? <div class="desk-stage"><BrowserFrame screen={desktopScreen} alt={image ?? 'myWaive desktop app'} eager sizes="(min-width: 1080px) 760px, 100vw" /></div>
+        : hasPhoto
+        ? <div class="hero-photo"><Photo name={photo!} alt={image ?? ''} ratio={photoRatio} tone="dark" icon={imageIcon} eager /></div>
+        : screen
+          ? <div class="screen-stage"><PhoneFrame screen={screen} alt={image ?? 'myWaive app screen'} width={300} eager /></div>
+          : <ImagePlaceholder alt={image ?? ''} icon={imageIcon} tone="dark" ratio="4 / 5" />}
+      {(hasPhoto || !screen) && cards.map((c, i) => <FloatingCard {...c} class={`float float-${i + 1}`} />)}
+    </div>
+  </div>
+</section>
+
+<style>@import './HeroDark.css';</style>

@@ -1,0 +1,13 @@
+---
+import { site } from '@/data/site';
+import Icon from '@/components/ui/Icon/Icon.astro';
+const linkedin = site.social.find((s) => s.icon === 'linkedin')!;
+---
+<aside class="details card" aria-label="Contact details">
+  <h2 class="h1">Talk to us directly</h2>
+  <ul role="list">
+    <li><Icon name="mail" /><a href={`mailto:${site.hello}`}>{site.hello}</a></li>
+    <li><Icon name="share" /><a href={linkedin.href} rel="noopener">myWaive on LinkedIn</a></li>
+  </ul>
+</aside>
+<style>@import './ContactDetails.css';</style>

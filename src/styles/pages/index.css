@@ -1,0 +1,6 @@
+.intro-row { display: grid; gap: var(--space-5); align-items: end; margin-bottom: var(--space-7); }
+@media (min-width: 1080px) { .intro-row { grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-8); } }
+.intro-copy h2 { margin-bottom: var(--space-3); max-width: 22ch; }
+.intro-copy .lead { max-width: 62ch; }
+/* The Impact section continues the same mint field */
+.home-connect { padding-bottom: 0; }

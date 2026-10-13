@@ -1,0 +1,50 @@
+---
+/** The 7 features as an accessible tab set with a product card visual per tab (Acelia "tabbed services"). */
+import { features } from '@/data/copy';
+import Icon from '@/components/ui/Icon/Icon.astro';
+import DeviceStack from '@/components/ui/DeviceStack/DeviceStack.astro';
+import { splitWords } from '@/utils/words';
+interface Props { eyebrow?: string; headline?: string; intro?: string; id?: string; tone?: 'white' | 'muted' | 'lilac'; embedded?: boolean; variant?: 'list' | 'pills'; limit?: number; items?: typeof features }
+const { eyebrow = 'The product', headline = 'Everything a saver needs, in one place', intro, id = 'features', tone = 'white', embedded = false, variant = 'list', limit, items = features } = Astro.props;
+// The board shows three highlighted capabilities on Home; Product lists all seven.
+const shown = limit ? items.slice(0, limit) : items;
+const Wrapper = embedded ? 'div' : 'section';
+---
+<Wrapper class:list={[embedded ? 'embedded' : 'section', !embedded && `bg-${tone}`]} id={id}>
+  <div class="container">
+    {!embedded && (
+      <div class="section-header" data-reveal>
+        {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+        <h2 class="h3" style={`--n:${splitWords(headline).length}`}>{splitWords(headline).map((w, i) => <>{i > 0 && ' '}<span class="scrub-word" style={`--i:${i}`}>{w.map((p) => p.text)}</span></>)}</h2>
+        {intro && <p class="lead muted">{intro}</p>}
+      </div>
+    )}
+    <div class:list={['tabs', `tabs-${variant}`]} data-tabs data-reveal>
+      <div class="tablist" role="tablist" aria-label="myWaive features">
+        {shown.map((f, i) => (
+          <button type="button" role="tab" id={`${id}-tab-${i}`} aria-selected={i === 0 ? 'true' : 'false'} aria-controls={`${id}-panel-${i}`} tabindex={i === 0 ? 0 : -1} class="tab">
+            <Icon name={f.icon} size={22} /><span>{f.title}</span>
+          </button>
+        ))}
+      </div>
+      <div class="panels">
+        {shown.map((f, i) => (
+          <div role="tabpanel" id={`${id}-panel-${i}`} aria-labelledby={`${id}-tab-${i}`} tabindex="0" class="panel" hidden={i !== 0}>
+            <div class="panel-copy">
+              <span class="icon-tile"><Icon name={f.icon} /></span>
+              <h3 class="h1">{f.title}</h3>
+              <p class="lead muted">{f.text}</p>
+            </div>
+            <div class="panel-visual">
+              <DeviceStack phone={f.screen} alt={`myWaive on laptop, tablet and phone - ${f.title}`} eager={i === 0} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</Wrapper>
+
+<style>@import './FeatureTabs.css';</style>
+
+<script>import './FeatureTabs.ts';</script>

@@ -1,0 +1,133 @@
+/*
+ * myWaive design tokens — source of truth: context/design_system/tokens/tokens.css
+ * (Figma: MyWaive — Platform → Style Guides). Semantic aliases and fluid type added for the website.
+ */
+:root {
+  /* Primary (Waive / Wave) */
+  --colour-primary-wave: #0966ff;
+  --colour-primary-100: #dfe4ff;
+  --colour-primary-300: #acb9ff;
+  --colour-primary-500: #7290ff;
+  --colour-primary-800: #0046b7;
+  --colour-primary-deep: #030a2f;
+  --colour-primary-darker: #0a4dd2; /* accessibility board alternate */
+
+  /* Secondary */
+  --colour-electric-cyan: #00f9f1;
+  --colour-electric-cyan-100: #bbfbf0;
+  --colour-electric-ruby: #fc50ac;
+  --colour-electric-ruby-100: #ffebf6;
+  --colour-electric-ruby-400: #ffb1df;
+  --colour-electric-ruby-800: #a9007f;
+  --colour-electric-ruby-900: #390029;
+  /* From the 'Ready for Prompts' board — not in the Figma design-system export */
+  --colour-deep-teal: #001d21;
+  --colour-mint: #b6e6d6;
+  --colour-mint-bright: #90f3db;
+
+  --colour-blue-grey: #cad6ea;
+
+  /* Neutrals */
+  --colour-black: #262627;
+  --colour-ink: #212121;
+  --colour-white: #ffffff;
+  --colour-muslin-white: #f8f8f4;
+  --colour-brilliant-white: #f4f7ff;
+  --colour-grey-100: #e0e0e0;
+  --colour-grey-300: #898989;
+  --colour-grey-500: #666666;
+  --colour-grey-800: #3d3d3d;
+
+  /* Sentiment */
+  --colour-negative-900: #c60c27;
+  --colour-negative-100: #ffe6e9;
+  --colour-alert-900: #d3420f;
+  --colour-alert-100: #ffe7d6;
+  --colour-positive: #02814b;
+  --colour-positive-100: #d1e8df;
+
+  /* Typography */
+  --font-family-sans: "DM Sans Variable", "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Fluid heading scale: mobile step → desktop step (design system min/max viewport) */
+  --type-h5: clamp(2.5rem, 1.6rem + 3.6vw, 4.7rem);      /* 40 → 75 */
+  --type-h4: clamp(2.125rem, 1.5rem + 2.6vw, 3.8rem);    /* 34 → 60 */
+  --type-h3: clamp(1.75rem, 1.3rem + 1.7vw, 3rem);       /* 28 → 48 */
+  --type-h2: clamp(1.5rem, 1.2rem + 1.1vw, 2.25rem);     /* 24 → 36 */
+  --type-h1: clamp(1.25rem, 1.1rem + 0.6vw, 1.9375rem);  /* 20 → 31 */
+  --type-h0: clamp(1.125rem, 1.05rem + 0.4vw, 1.5625rem);/* 18 → 25 */
+  --type-lead: clamp(1.125rem, 1rem + 0.4vw, 1.5rem);    /* 18 → 24 */
+  --type-body: 1rem;
+  --type-small: 0.875rem;
+  --lh-tight: 1.1;
+  --lh-heading: 1.2;
+  --lh-body: 1.5;
+
+  /* Spacing (8px base, 4px micro) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 40px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 80px;
+  --space-10: 104px;
+  --section-y: clamp(var(--space-7), 6vw + 1rem, var(--space-10));
+  --gutter: var(--space-3);
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 9999px;
+
+  /* Layout */
+  --container: 1280px;
+  --container-narrow: 860px;
+  --prose: 72ch;
+
+  /* Breakpoints (reference only — media queries use literal px) */
+  --bp-medium: 600px;
+  --bp-small: 1080px;
+  --bp-large: 1280px;
+  --bp-xl: 1600px;
+
+  /* Shadow */
+  --shadow-card: 0 10px 30px rgba(3, 10, 47, 0.10), 0 2px 6px rgba(3, 10, 47, 0.06);
+  --shadow-float: 0 24px 60px rgba(3, 10, 47, 0.22);
+
+  /* Motion */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  /* Entrance and on-screen motion (matches v2) */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --dur-reveal: 700ms;
+  --dur: 220ms;
+}
+
+/* Semantic aliases */
+:root {
+  --color-brand: var(--colour-primary-wave);
+  --color-brand-dark: var(--colour-primary-800);
+  --color-brand-tint: var(--colour-primary-100);
+  --color-accent: var(--colour-electric-cyan);
+  --color-accent-2: var(--colour-electric-ruby);
+  --color-text: var(--colour-ink);
+  --color-text-muted: var(--colour-grey-500);
+  --color-text-inverse: var(--colour-white);
+  --color-surface: var(--colour-white);
+  --color-surface-muted: var(--colour-muslin-white);
+  --color-surface-tint: var(--colour-brilliant-white);
+  --color-surface-dark: var(--colour-black);
+  --color-border: var(--colour-grey-100);
+  --color-focus: var(--colour-primary-wave);
+}
+
+@media (min-width: 600px)  { :root { --gutter: var(--space-4); } }
+@media (min-width: 1080px) { :root { --gutter: var(--space-6); } }

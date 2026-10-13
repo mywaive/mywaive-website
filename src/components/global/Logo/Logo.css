@@ -1,0 +1,8 @@
+.logo { display: inline-flex; align-items: center; flex-shrink: 0; }
+.logo svg { display: block; overflow: visible; }
+/* As on v2: the mark turns a quarter-ish on hover and settles back */
+.logo-mark { transform-box: fill-box; transform-origin: center; transition: transform 450ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .logo:hover .logo-mark, .logo:focus-visible .logo-mark { transform: rotate(-24deg); }
+}
+@media (prefers-reduced-motion: reduce) { .logo-mark { transition: none; } }

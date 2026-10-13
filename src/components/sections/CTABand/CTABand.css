@@ -1,0 +1,9 @@
+.cta-band { padding-block: var(--section-y); }
+.cta-box { position: relative; overflow: hidden; border-radius: var(--radius-lg); padding: clamp(var(--space-6), 5vw, var(--space-9)); display: grid; gap: var(--space-6); align-items: center; }
+@media (min-width: 1080px) { .cta-box { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: var(--space-8); } }
+.cta-glow { position: absolute; right: -10%; top: -60%; width: 60%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,255,255,0.22), rgba(255,255,255,0)); pointer-events: none; }
+.cta-copy { position: relative; max-width: 34ch; }
+.cta-copy .lead { margin-top: var(--space-3); }
+.cta-action { margin-top: var(--space-5); }
+/* Product screen sits fully inside the band — nothing clipped off the bottom */
+.cta-visual { position: relative; align-self: center; }

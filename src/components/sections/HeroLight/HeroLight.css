@@ -1,0 +1,9 @@
+@media (prefers-reduced-motion: no-preference) {
+  .hero-light-copy > :not(h1) { animation: rise 900ms var(--ease-out) 300ms both; }
+}
+@keyframes rise { from { opacity: 0; transform: translateY(24px); } }
+.hero-light { padding-top: calc(var(--space-10) + 20px); padding-bottom: var(--section-y); }
+.hero-light.short { padding-bottom: var(--space-7); }
+.hero-light-copy { max-width: 820px; }
+.hero-light-copy h1 { margin-bottom: var(--space-4); }
+.hero-light-copy .lead { max-width: 56ch; }

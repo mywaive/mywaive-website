@@ -1,0 +1,11 @@
+---
+/** Templates T1–T5: BaseLayout + optional closing CTA band. */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CTABand from '@/components/sections/CTABand/CTABand.astro';
+interface Props { title: string; description?: string; theme?: 'dark' | 'light'; cta?: { headline: string; sub?: string; label?: string; href?: string; screen?: string; tone?: 'page' | 'lilac' } | false }
+const { title, description, theme = 'light', cta } = Astro.props;
+---
+<BaseLayout title={title} description={description} theme={theme}>
+  <slot />
+  {cta !== false && <CTABand {...(cta ?? {})} />}
+</BaseLayout>

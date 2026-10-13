@@ -1,0 +1,15 @@
+---
+/** Desktop browser frame around a rendered product screen (src/assets/screens/desktop-*.png, 1440×900 @2x). */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+interface Props { screen: string; alt: string; class?: string; eager?: boolean; sizes?: string }
+const { screen, alt, class: cls = '', eager = false, sizes = '(min-width: 1080px) 720px, 100vw' } = Astro.props;
+const screens = import.meta.glob<{ default: ImageMetadata }>('/src/assets/screens/*.png', { eager: true });
+const src = screens[`/src/assets/screens/${screen}.png`]?.default;
+if (!src) throw new Error(`Screen "${screen}" not found in src/assets/screens`);
+---
+<figure class:list={['browser', cls]}>
+  <div class="browser-bar" aria-hidden="true"><span></span><span></span><span></span><i>app.mywaive.io</i></div>
+  <Image src={src} alt={alt} widths={[640, 960, 1440]} sizes={sizes} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+</figure>
+<style>@import './BrowserFrame.css';</style>

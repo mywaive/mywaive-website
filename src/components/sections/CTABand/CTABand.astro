@@ -1,0 +1,20 @@
+---
+import Button from '@/components/ui/Button/Button.astro';
+import BrowserFrame from '@/components/ui/BrowserFrame/BrowserFrame.astro';
+interface Props { headline?: string; sub?: string; label?: string; href?: string; screen?: string; tone?: 'page' | 'lilac' }
+const { headline = 'See myWaive in action', sub = 'A demo, tailored to your scheme, workforce or platform.', label = 'Book a demo', href = '/contact', screen = 'figma-dashboard', tone = 'page' } = Astro.props;
+---
+<section class:list={['cta-band', { 'bg-lilac': tone === 'lilac' }]}>
+  <div class="container">
+    <div class="cta-box bg-brand" data-reveal>
+      <div class="cta-glow" aria-hidden="true"></div>
+      <div class="cta-copy">
+        <h2 class="h3">{headline}</h2>
+        {sub && <p class="lead">{sub}</p>}
+        <div class="cta-action"><span class="magnet" data-magnet><Button href={href} variant="inverse" size="lg" icon="arrow_forward">{label}</Button></span></div>
+      </div>
+      {screen && <div class="cta-visual"><BrowserFrame screen={screen} alt="myWaive desktop dashboard" sizes="(min-width: 1080px) 620px, 100vw" /></div>}
+    </div>
+  </div>
+</section>
+<style>@import './CTABand.css';</style>

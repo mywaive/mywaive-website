@@ -1,0 +1,24 @@
+---
+import { roadmap } from '@/data/copy';
+import Icon from '@/components/ui/Icon/Icon.astro';
+interface Props { headline?: string; intro?: string }
+const { headline = 'While you’re saving… and into retirement', intro = 'Affordable, regulated advice in your pocket - at every stage.' } = Astro.props;
+const cols = [ { ...roadmap.saving, icon: 'savings' }, { ...roadmap.retirement, icon: 'beach_access' } ];
+---
+<section class="section bg-ruby-tint">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <h2 class="h3">{headline}</h2>
+      {intro && <p class="lead muted">{intro}</p>}
+    </div>
+    <div class="grid grid-2" data-stagger>
+      {cols.map((c) => (
+        <article class="card rm" data-reveal>
+          <div class="rm-head"><span class="icon-tile"><Icon name={c.icon} /></span><h3 class="h1">{c.title}</h3></div>
+          <ul role="list">{c.items.map((i) => <li><Icon name="arrow_right_alt" size={20} />{i}</li>)}</ul>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+<style>@import './Roadmap.css';</style>

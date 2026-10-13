@@ -1,0 +1,14 @@
+---
+/** Phone device frame around a rendered product screen (src/assets/screens/*.png, 390×844 @2x), served as responsive WebP. */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+interface Props { screen: string; alt: string; class?: string; width?: number; eager?: boolean }
+const { screen, alt, class: cls = '', width = 300, eager = false } = Astro.props;
+const screens = import.meta.glob<{ default: ImageMetadata }>('/src/assets/screens/*.png', { eager: true });
+const src = screens[`/src/assets/screens/${screen}.png`]?.default;
+if (!src) throw new Error(`Screen "${screen}" not found in src/assets/screens`);
+---
+<figure class:list={['phone', cls]} style={`--w:${width}px`}>
+  <Image src={src} alt={alt} widths={[320, 480, 640]} sizes={`${width}px`} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+</figure>
+<style>@import './PhoneFrame.css';</style>

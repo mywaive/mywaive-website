@@ -1,0 +1,5 @@
+.cookie[hidden] { display: none; }
+.cookie { position: fixed; inset: auto var(--gutter) var(--gutter) var(--gutter); z-index: 200; background: var(--colour-black); color: #fff; border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; justify-content: space-between; box-shadow: var(--shadow-float); max-width: 720px; margin-inline: auto; }
+.cookie a { color: var(--colour-primary-300); }
+.cookie-btn { min-height: 40px; padding: 0 var(--space-4); border-radius: var(--radius-pill); font-weight: 600; background: #fff; color: var(--colour-black); }
+.cookie-btn:hover { background: var(--colour-primary-100); }

@@ -1,0 +1,21 @@
+.ic {
+  display: flex; flex-direction: column; justify-content: space-between;
+  overflow: hidden;
+  background: var(--card);
+  /* One shared navy hairline, so four colours read as four instances of one component.
+     Inset so the bleeding illustration clips at the true card edge. */
+  box-shadow: inset 0 0 0 1px rgba(3, 10, 47, 0.08);
+  border-radius: var(--radius-md); color: var(--colour-ink);
+}
+.ic-copy { padding: var(--space-5) var(--space-5) 0; }
+.ic h3 { margin-bottom: var(--space-3); letter-spacing: -0.015em; }
+.ic p { font-size: var(--type-small); line-height: 1.5; color: var(--colour-grey-800); max-width: 30ch; }
+/* Illustration anchors the card and bleeds off the bottom edge, as drawn */
+.ic-art { flex: none; margin-top: var(--space-5); display: flex; justify-content: center; }
+.ic-art :global(img) { width: 100%; height: auto; margin-bottom: -8%; }
+@media (min-width: 1080px) { .grid-4 { gap: var(--space-5); } }
+@media (max-width: 1079px) {
+  .ic-copy { padding: var(--space-4) var(--space-4) 0; }
+  .ic-art { margin-top: var(--space-4); }
+  .ic-art :global(img) { width: 84%; margin-bottom: -5%; }
+}

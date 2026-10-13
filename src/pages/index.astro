@@ -1,0 +1,79 @@
+---
+/* Layout from the Figma "Design updates" file (Landing, 1:207); copy as approved in docs/feedback/copy-changes.md. */
+import PageLayout from '@/layouts/PageLayout.astro';
+import HeroDark from '@/components/sections/HeroDark/HeroDark.astro';
+import AudienceCards from '@/components/sections/AudienceCards/AudienceCards.astro';
+import FeatureTabs from '@/components/sections/FeatureTabs/FeatureTabs.astro';
+import HowItWorks from '@/components/sections/HowItWorks/HowItWorks.astro';
+import IllustrationCards from '@/components/sections/IllustrationCards/IllustrationCards.astro';
+import Testimonials from '@/components/sections/Testimonials/Testimonials.astro';
+import Button from '@/components/ui/Button/Button.astro';
+import { features, howItWorks } from '@/data/copy';
+import { site } from '@/data/site';
+---
+<PageLayout title={site.name} description={site.description} cta={{ headline: 'See myWaive in action', sub: 'A demo, tailored to your scheme, workforce or platform.', tone: 'lilac' }}>
+  <HeroDark
+    tone="light"
+    headline="Workplace savings advice and guidance, for everyone"
+    highlight="for everyone"
+    sub="myWaive provides technology-enabled personalised savings advice and guidance to members - affordable, always-on, fully audited."
+    photo="home-hero-pair"
+    photoRatio="928 / 1024"
+    image="Two colleagues reviewing their workplace savings together on a laptop"
+    cards={[
+      { icon: 'calculate', label: 'Contribution calculator', value: '+£27 / month', progress: 72, note: '£12k more at retirement' },
+      { icon: 'flag', label: 'Retirement projection', value: 'On track', note: 'Reviewed today' },
+    ]}
+  />
+
+  <section class="section bg-lilac product-block" id="product">
+    <div class="container">
+      <div class="intro-row" data-reveal>
+        <div class="intro-copy">
+          <h2 class="h3">A single dashboard, available 24/7</h2>
+          <p class="lead muted">Savings and investments in one place, allowing members to make informed decisions about their savings and achieving a better outcome at retirement.</p>
+        </div>
+        <div class="intro-cta"><Button href="/product" icon="arrow_forward">Explore myWaive</Button></div>
+      </div>
+      <FeatureTabs embedded variant="pills" items={[
+        { ...features[0], text: 'Easier decision making via a clear, engaging journey that members will want to use.' },
+        features[1],
+        { ...features[2], title: 'Tailored to the member' },
+      ]} />
+    </div>
+  </section>
+
+  <AudienceCards tone="white" align="center" eyebrow={false} panelTone="ruby-tint" headline="Created for savers, accessed through employers and their savings providers" />
+
+  <!-- How it works in a white panel, then Impact, on one dotted mint field -->
+  <section class="section bg-mint-bright dotted home-connect">
+    <div class="container">
+      <div class="panel">
+        <HowItWorks
+          embedded
+          eyebrow=""
+          layout="side"
+          headline="Connected to the market infrastructure"
+          intro="Plug into your scheme data, give every member personalised and compliant advice, and keep them engaged with ongoing reviews."
+          steps={[howItWorks[0], howItWorks[2], howItWorks[3]]}
+          link={{ label: 'See the full platform', href: '/product' }}
+        />
+      </div>
+    </div>
+  </section>
+  <IllustrationCards
+    tone="mint-bright"
+    dotted
+    headline="Impact"
+    intro="We are proud to be part of The Impact Builder Programme."
+    cards={[
+      { illustration: 'accessible', colour: '#81b4fc', title: 'Accessible' },
+      { illustration: 'affordable', colour: '#c5b1f9', title: 'Affordable' },
+      { illustration: 'inclusive', colour: '#ffb1d1', title: 'Inclusive' },
+    ]}
+  />
+
+  <Testimonials tone="lilac" eyebrow={false} feature highlight="Trusted" only="group-hr-director" />
+</PageLayout>
+
+<style>@import '../styles/pages/index.css';</style>

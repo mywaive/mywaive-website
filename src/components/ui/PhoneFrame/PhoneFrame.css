@@ -1,0 +1,3 @@
+.phone { width: var(--w); max-width: 100%; aspect-ratio: 390 / 844; border-radius: 42px; background: #0d0d0e; padding: 9px; box-shadow: 0 30px 80px rgba(3, 10, 47, 0.35), inset 0 0 0 2px rgba(255,255,255,0.08); position: relative; flex-shrink: 0; }
+.phone::before { content: ""; position: absolute; top: 17px; left: 50%; transform: translateX(-50%); width: 30%; height: 20px; border-radius: 12px; background: #0d0d0e; z-index: 1; }
+.phone :global(img) { width: 100%; height: 100%; object-fit: cover; border-radius: 34px; display: block; }

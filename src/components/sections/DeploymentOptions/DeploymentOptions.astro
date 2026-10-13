@@ -1,0 +1,26 @@
+---
+import { deploymentOptions } from '@/data/copy';
+import Icon from '@/components/ui/Icon/Icon.astro';
+interface Props { headline?: string; intro?: string; id?: string; tone?: 'white' | 'muted' | 'ruby-tint'; embedded?: boolean }
+const { headline = 'Two ways to deploy. One engine', intro = 'Advice-as-a-Service: securely hosted, API-first, configured to your rules.', id = 'deployment', tone = 'muted', embedded = false } = Astro.props;
+const Wrapper = embedded ? 'div' : 'section';
+---
+<Wrapper class:list={[embedded ? 'embedded' : ['section', `bg-${tone}`]]} id={id}>
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <h2 class="h3">{headline}</h2>
+      {intro && <p class="lead muted">{intro}</p>}
+    </div>
+    <div class="grid grid-2" data-stagger>
+      {deploymentOptions.map((o) => (
+        <article class="card dep" data-reveal>
+          <div class="dep-head"><span class="icon-tile"><Icon name={o.icon} /></span></div>
+          <h3 class="h1">{o.title}</h3>
+          <p>{o.text}</p>
+          <ul class="dep-points" role="list">{o.points.map((p) => <li><Icon name="check_circle" size={20} fill />{p}</li>)}</ul>
+        </article>
+      ))}
+    </div>
+  </div>
+</Wrapper>
+<style>@import './DeploymentOptions.css';</style>

@@ -1,0 +1,21 @@
+/* Layout */
+.container { width: 100%; max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
+.container-narrow { width: 100%; max-width: var(--container-narrow); margin-inline: auto; padding-inline: var(--gutter); }
+.section { padding-block: var(--section-y); }
+.section-tight { padding-block: calc(var(--section-y) * 0.6); }
+.section-header { max-width: 760px; margin-bottom: var(--space-7); }
+.section-header p { margin-top: var(--space-4); text-wrap: balance; }
+.section-header.center { margin-inline: auto; text-align: center; }
+@media (max-width: 599px) {
+  .section-header { margin-bottom: var(--space-5); }
+  .grid { gap: var(--space-3); }
+  .grid.m-2col { grid-template-columns: 1fr 1fr; }
+  .card { padding: var(--space-4); }
+  /* Compact tile: icon beside the title instead of above it */
+  .tile-compact { display: grid !important; grid-template-columns: 44px 1fr; column-gap: var(--space-3); row-gap: 2px; align-items: start; padding: var(--space-4) !important; }
+  .tile-compact > .icon-tile { width: 44px; height: 44px; grid-row: span 2; border-radius: 12px; }
+  .tile-compact > .icon-tile .material-symbols-rounded { font-size: 22px; }
+  .tile-compact > h3 { margin: 0 !important; }
+  .tile-compact > p { font-size: var(--type-small); }
+}
+

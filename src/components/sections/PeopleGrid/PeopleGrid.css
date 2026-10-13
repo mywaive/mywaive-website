@@ -1,0 +1,37 @@
+.shape-square .people-heading { margin-bottom: var(--space-7); }
+.people ul { display: grid; gap: var(--space-5) var(--space-4); grid-template-columns: repeat(2, minmax(0, 1fr)); overflow-wrap: break-word; }
+/* A 4-up grid at 3 columns strands the fourth person alone beside two empty cells,
+   so 4-up steps to 2x2 on tablet and only 5-up uses 3 (which reads 3 + 2). */
+@media (min-width: 700px) { .people ul { grid-template-columns: repeat(var(--cols-md, 3), 1fr); } }
+@media (min-width: 1080px) { .people ul { grid-template-columns: repeat(var(--cols), 1fr); gap: var(--space-6) var(--space-5); } }
+.portrait { margin-bottom: var(--space-4); }
+/* Square: a wide rounded portrait that fills the column */
+/* Square: a rounded portrait that fills the column.
+   Deliberate deviation from the wireframe, whose 824/600 placeholder was drawn before any
+   real headshot existed. Every supplied file is square, so a landscape box throws away 27%
+   of the height of all four. Measured head-top per source: Emma 3.75%, James 5.0%,
+   Mark 8.13% — so at object-position 50% 15% (crop starts at 4.08%) Emma's and Joe's crowns
+   are cut flat and James clears by half a pixel; at 50% 0% every crown clears but the frame
+   then cuts across Mark's chin. One object-position cannot serve four photographers.
+   Square crops nothing and costs no resolution: the slot is 552 device px and the smallest
+   source (Joe, 599px) still downscales.
+   Square portraits request size 400, so densities [1,2] emit 400px and 800px assets.
+   The widest the slot ever gets is the tablet 2-up cell (~394 CSS px = 788 device px at
+   2x), which the 800px asset covers. Joe's source is only 599px so his 2x caps there and
+   he softens slightly at tablet — the alternative was capping every portrait and leaving
+   ~100px of dead space in each cell. */
+.shape-square .portrait :global(.avatar) { width: 100%; height: auto; aspect-ratio: 1; border-radius: var(--radius-md); }
+/* Emma's black top and Mark's foliage run to the tile edge and merge into the band:
+   72% of her bottom edge and 40% of his left edge measure below 1.5:1 against #001d21,
+   both bottoming out at 1.00:1. A hairline restores the edge. Outset, not inset — an
+   inset shadow on a replaced element paints beneath the image and never shows. */
+.shape-square .portrait :global(img.avatar) { box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.22); }
+.shape-square .portrait :global(.avatar-initials) { font-size: clamp(2rem, 4vw, 3rem); }
+/* Circle: smaller round portrait */
+.name { font-weight: 600; font-size: 1.0625rem; line-height: 1.3; }
+.role { font-size: var(--type-small); line-height: 1.4; margin-top: 4px; color: var(--colour-primary-300); }
+/* Portraits are placeholders until real headshots land — tone them into the band
+   instead of the bright lilac tile, which read as a broken image. */
+.linkedin { display: inline-grid; place-items: center; width: 44px; height: 44px; margin-top: var(--space-1); margin-left: -12px; color: inherit; }
+:global(.bg-brand) .role { color: var(--colour-white); }
+:global(.on-dark) .portrait :global(.avatar-initials) { background: rgba(255, 255, 255, 0.06); color: var(--colour-primary-300); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12); font-weight: 500; }

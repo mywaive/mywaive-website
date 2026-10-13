@@ -1,0 +1,15 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+import Button from '@/components/ui/Button/Button.astro';
+---
+<PageLayout title="Page not found" cta={false}>
+  <section class="nf bg-tint">
+    <div class="container-narrow">
+      <p class="eyebrow">404</p>
+      <h1 class="h3">We couldn’t find that page</h1>
+      <p class="lead muted">It may have moved. Try the homepage, or tell us what you were looking for.</p>
+      <div class="nf-actions"><Button href="/" icon="arrow_forward">Go to the homepage</Button><Button href="/contact" variant="secondary">Contact us</Button></div>
+    </div>
+  </section>
+</PageLayout>
+<style>@import '../styles/pages/404.css';</style>

@@ -1,0 +1,24 @@
+.card-panel { padding: clamp(var(--space-4), 2.5vw, var(--space-6)); border-radius: var(--radius-lg); }
+.aud { display: flex; flex-direction: column; position: relative; transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+@media (hover: hover) and (pointer: fine) { .aud:hover { transform: translateY(-4px); box-shadow: var(--shadow-card); } }
+.aud h3 { margin-top: var(--space-4); }
+@media (max-width: 599px) { .aud .icon-tile { width: 44px; height: 44px; border-radius: 12px; } .aud h3 { margin-top: var(--space-3); } .aud-link { margin-top: var(--space-3); } }
+.aud p { flex: 1; }
+.aud-link { display: inline-flex; align-items: center; gap: 6px; padding-block: 6px; margin-top: calc(var(--space-4) - 6px); font-weight: 600; color: var(--color-brand); text-decoration: none; }
+.aud-link::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+.aud-link:hover { text-decoration: underline; }
+/* Photo cards */
+.aud-photo { position: relative; border-radius: var(--radius-lg); overflow: hidden; min-height: 460px; isolation: isolate; justify-content: flex-end; border: 0; padding: 0; color: #fff; }
+.aud-photo :global(.aud-img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; transition: transform 600ms var(--ease); }
+@media (hover: hover) and (pointer: fine) { .aud-photo:hover :global(.aud-img) { transform: scale(1.04); } }
+/* GlareHover (React Bits, ported to CSS): a light band sweeps across the photo on hover */
+.aud-photo::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(-45deg, transparent 60%, rgba(255, 255, 255, 0.38) 70%, transparent 80%); background-size: 250% 250%; background-position: -100% -100%; }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .aud-photo::before { transition: background-position 800ms var(--ease-out); }
+  .aud-photo:hover::before { background-position: 100% 100%; }
+}
+.aud-photo::after { content: ""; position: absolute; inset: 0; z-index: -2;  /* same layer as the photo, painted after it, so the glare (::before, -1) sweeps over both */ background: linear-gradient(to top, rgba(3,10,47,0.85) 0%, rgba(3,10,47,0.45) 45%, rgba(3,10,47,0.05) 100%); }
+.aud-body { padding: var(--space-5); }
+.aud-photo p { color: rgba(255,255,255,0.9); flex: 0; }
+.aud-photo .aud-link { color: #fff; }
+@media (max-width: 599px) { .aud-photo { min-height: 360px; } }

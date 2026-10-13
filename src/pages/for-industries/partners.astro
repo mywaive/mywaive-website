@@ -1,0 +1,54 @@
+---
+/* Layout from the Figma "Design updates" file (Partners, 7:166). */
+import PageLayout from '@/layouts/PageLayout.astro';
+import HeroDark from '@/components/sections/HeroDark/HeroDark.astro';
+import FeatureList from '@/components/sections/FeatureList/FeatureList.astro';
+import ImageBanner from '@/components/sections/ImageBanner/ImageBanner.astro';
+import DeploymentOptions from '@/components/sections/DeploymentOptions/DeploymentOptions.astro';
+import TrustGrid from '@/components/sections/TrustGrid/TrustGrid.astro';
+import HowItWorks from '@/components/sections/HowItWorks/HowItWorks.astro';
+import Testimonials from '@/components/sections/Testimonials/Testimonials.astro';
+const benefits = [
+  { icon: 'extension', title: 'A core, integrated module of your platform' },
+  { icon: 'branding_watermark', title: 'White-label the whole experience under your brand' },
+  { icon: 'account_balance', title: 'Scheme provider connectivity for valuations and fund choices, all managed in-portal' },
+  { icon: 'groups', title: 'Provide personalised advice to all employees on your platform, not just the few that pay for it' },
+  { icon: 'favorite', title: 'An enhanced pension and financial wellbeing offering to your portal' },
+  { icon: 'fact_check', title: 'Full audit trail and regulatory compliance validation' },
+];
+const onboarding = [
+  { icon: 'forum', title: 'Partnership scoping', text: 'We map your platform, your corporate clients and the commercial model.' },
+  { icon: 'api', title: 'Integration', text: 'API-first integration or a white-labelled front end, configured to your brand.' },
+  { icon: 'science', title: 'Pilot', text: 'Run myWaive with a first corporate client, with support from the myWaive team.' },
+  { icon: 'rocket_launch', title: 'Roll-out', text: 'Offer myWaive across your client base, at launch or mid-cycle.' },
+];
+---
+<PageLayout title="Partner with myWaive - Benefits Providers" description="Add regulated, personalised pension advice to your corporate proposition. myWaive is API-first and white-label ready for benefits providers, advisers and fintechs." theme="light" cta={{ headline: 'Let’s build it together', sub: 'The myWaive team will show you how we add value to your existing proposition.', label: 'Talk to us', screen: 'figma-transfer-step2' }}>
+  <HeroDark
+    tone="lilac"
+    hideActions
+    accent="ruby"
+    headline="Add regulated advice to your corporate proposition"
+    highlight="regulated advice"
+    sub="myWaive is API-first and white-label ready, so benefits platforms can offer personalised pensions management and advice to the employers you sell to - under your brand."
+    photo="partners-hero"
+    photoRatio="4 / 3"
+    image="A benefits consultant presenting to an HR team"
+    cards={[
+      { icon: 'api', label: 'Integration', value: 'API-first', note: 'Configuration-based onboarding' },
+      { icon: 'branding_watermark', label: 'Experience', value: 'Your brand', note: 'SSO · white-label' },
+    ]}
+  />
+  <FeatureList eyebrow="" headline="myWaive - a personalised, engaging pension management tool for all employees" items={benefits} tone="lilac" columns={3} />
+  <ImageBanner
+    accent="ruby"
+    headline="Demand from customers for pension support is high. You’ve got a solution now"
+    text="myWaive is an AI-enabled personalised advice engine, designed to support employees make informed decisions about their workplace savings and achieve a better outcome at retirement. We’ve built it, you deliver it."
+    photo="providers-collab"
+    alt="Two people looking at a pension app together on a phone"
+  />
+  <DeploymentOptions tone="white" />
+  <TrustGrid headline="Built for data-centric, regulated environments" intro="myWaive is designed to operate in a regulated environment, with a complete audit trail behind every recommendation." />
+  <HowItWorks eyebrow="" headline="From partnership to roll-out" steps={onboarding} id="onboarding" tone="white" layout="timeline" />
+  <Testimonials tone="lilac" eyebrow={false} headline="" only="wealth-manager-coo" />
+</PageLayout>

@@ -1,0 +1,13 @@
+.one { max-width: 900px; margin-inline: auto; }
+.quote { padding: var(--space-5); border-radius: var(--radius-lg); border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.05); }
+.bg-white .quote { border-color: var(--color-border); background: var(--color-surface-tint); }
+.bg-lilac .quote { border-color: transparent; background: var(--colour-white); }
+.bg-ruby-tint .quote { border-color: transparent; background: var(--colour-white); }
+/* Feature: the quote is the section — centred, large, no card */
+.feature .section-header { text-align: center; margin-inline: auto; }
+.feature .one { max-width: 1040px; margin-inline: auto; }
+.feature .quote { padding: 0; border: 0; background: none; text-align: center; }
+.feature blockquote footer { color: var(--color-text); font-weight: 600; opacity: 1; }
+/* Electric Ruby on every tone — a later duplicate rule used to override this back to blue */
+.quote :global(.quote-mark) { color: var(--colour-electric-ruby); margin-bottom: var(--space-3); }
+blockquote footer { margin-top: var(--space-4); font-weight: 500; }

@@ -1,0 +1,58 @@
+.hero.accent-cyan { --hero-hl: var(--colour-electric-cyan); --hero-glow: rgba(0,249,241,0.28); }
+.hero.accent-ruby { --hero-hl: var(--colour-electric-ruby-400); --hero-glow: rgba(252,80,172,0.32); }
+.hero .highlight { color: var(--hero-hl, var(--colour-primary-300)); }
+.hero .eyebrow { color: var(--hero-hl, var(--colour-electric-cyan)); }
+.hero-glow { background: radial-gradient(closest-side, var(--hero-glow, rgba(9,102,255,0.45)), transparent 70%) !important; }
+.tone-lilac .highlight { color: var(--color-brand); }
+.tone-lilac .eyebrow { color: var(--colour-primary-800); }
+.tone-lilac .muted { color: var(--colour-grey-800); }
+.tone-lilac .hero-glow { display: none; }
+.tone-lilac .hero-visual { max-width: 620px; }
+.tone-light h1 { color: var(--color-brand); }
+/* Product: screen in a Wave-blue rim (as drawn) */
+.tone-white .desk-stage :global(.browser) { box-shadow: 0 0 0 4px var(--color-brand), 0 24px 60px rgba(3, 10, 47, 0.18); }
+.hero { position: relative; overflow: hidden; padding-top: calc(var(--space-10) + 20px); padding-bottom: var(--section-y); }
+.hero.compact { padding-bottom: var(--space-8); }
+.hero-glow { position: absolute; width: 70vw; height: 70vw; max-width: 900px; max-height: 900px; right: -20vw; top: -30vw; border-radius: 50%; background: radial-gradient(closest-side, rgba(9,102,255,0.45), rgba(9,102,255,0) 70%); pointer-events: none; }
+.hero-grid { position: relative; display: grid; gap: var(--space-7); align-items: center; }
+@media (min-width: 768px) { .hero-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: var(--space-6); } }
+@media (min-width: 1080px) { .hero-grid { gap: var(--space-9); } .hero-grid:has(.wide) { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); } }
+.hero-copy h1 { margin-bottom: var(--space-4); max-width: 16ch; }
+.hero-copy .lead { max-width: 52ch; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-6); }
+@media (max-width: 599px) { .hero-actions :global(.btn) { flex: 1 1 100%; } }
+.hero-visual { position: relative; max-width: 520px; margin-inline: auto; width: 100%; }
+.hero-visual.wide { max-width: none; }
+/* Screen stays inside its column (it used to run 18% wider and get cut off by the page edge).
+   Padding keeps the blue rim and shadow inside the unveil clip. */
+.desk-stage { position: relative; padding: 8px; }
+/* As in the Figma: a landscape crop of the top of the screen, not the whole tall page */
+/* Ends just below the two cards (cards end at 820, next box starts at 837 in the 1285×1496 screen), before the next box - no half-cut text */
+.desk-stage :global(.browser img) { aspect-ratio: 1285 / 834; object-fit: cover; object-position: top left; }
+.screen-stage { display: flex; justify-content: center; align-items: flex-start; aspect-ratio: 4 / 5; border-radius: var(--radius-lg); background: radial-gradient(closest-side at 50% 55%, rgba(9,102,255,0.45), rgba(9,102,255,0) 95%); overflow: hidden; padding-top: var(--space-6); -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent 100%); mask-image: linear-gradient(to bottom, #000 78%, transparent 100%); }
+.screen-stage :global(.phone) { width: min(300px, 72%); }
+.hero-visual :global(.float) { position: absolute; }
+.hero-visual :global(.float-1) { left: -6%; bottom: 14%; }
+.hero-visual :global(.float-2) { right: -10%; top: 8%; }
+.hero-visual :global(.float-1) { left: -10%; }
+.hero-visual :global(.float-3) { right: 6%; bottom: -4%; }
+@media (max-width: 1079px) { .hero-visual :global(.float) { scale: 0.85; } .hero-visual :global(.float-1) { left: 12px; bottom: 12px; transform-origin: bottom left; } .hero-visual :global(.float-2) { right: 12px; top: 12px; transform-origin: top right; } }
+.hero-photo { border-radius: var(--radius-lg); overflow: hidden; }
+.hero-photo :global(img) { display: block; }
+/* Entrance (same sequence as v2's hero): copy rises in a 80ms cascade, the photo unveils
+   and settles from a slight zoom, then the floating cards land. Runs once on load. */
+@media (prefers-reduced-motion: no-preference) {
+  /* Headline words blur in (React Bits BlurText, styles/effects.css); the rest rises after it */
+  .hero-copy > :not(h1) { animation: rise 900ms var(--ease-out) both; }
+  .hero-copy > .lead { animation-delay: 350ms; }
+  .hero-copy > .hero-actions { animation-delay: 450ms; }
+  .hero-photo, .desk-stage { animation: unveil 1200ms var(--ease-in-out) both; }
+  .hero-photo :global(img) { animation: settle 1600ms var(--ease-out) both; }
+  .hero-visual :global(.float) { animation: float-in 800ms var(--ease-out) 700ms both; }
+  .hero-visual :global(.float-2) { animation-delay: 850ms; }
+  .hero-visual :global(.float-3) { animation-delay: 1000ms; }
+}
+@keyframes rise { from { opacity: 0; transform: translateY(24px); } }
+@keyframes unveil { from { clip-path: inset(10% 10% 10% 10% round var(--radius-lg)); } to { clip-path: inset(0 0 0 0 round var(--radius-lg)); } }
+@keyframes settle { from { transform: scale(1.12); } }
+@keyframes float-in { from { opacity: 0; transform: translateY(18px) scale(0.97); } }

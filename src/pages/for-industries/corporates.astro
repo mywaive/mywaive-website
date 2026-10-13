@@ -1,0 +1,60 @@
+---
+/* Layout from the Figma "Design updates" file (Corporates, 5:286). */
+import PageLayout from '@/layouts/PageLayout.astro';
+import HeroDark from '@/components/sections/HeroDark/HeroDark.astro';
+import FeatureList from '@/components/sections/FeatureList/FeatureList.astro';
+import ImageBanner from '@/components/sections/ImageBanner/ImageBanner.astro';
+import BusinessCase from '@/components/sections/BusinessCase/BusinessCase.astro';
+import HowItWorks from '@/components/sections/HowItWorks/HowItWorks.astro';
+import Testimonials from '@/components/sections/Testimonials/Testimonials.astro';
+const benefits = [
+  { icon: 'savings', title: 'Reduces the cost of delivering advice significantly' },
+  { icon: 'payments', title: 'Makes the most of the spend you already make on pension contributions' },
+  { icon: 'favorite', title: 'Highly engages employees and drives better outcomes for them at retirement' },
+  { icon: 'workspace_premium', title: 'A true differentiator in your benefits package' },
+  { icon: 'luggage', title: 'Employees can take myWaive with them when they leave' },
+  { icon: 'hub', title: 'Fully integrated with your employee pension journey' },
+];
+const rollout = [
+  { icon: 'search', title: 'Discovery', text: 'We learn your scheme, providers and communication strategy.' },
+  { icon: 'tune', title: 'Configure', text: 'myWaive is configured to your scheme and comms - no development on your side.' },
+  { icon: 'campaign', title: 'Launch', text: 'Go-live at a time to suit you, with immediate easy access for employees.' },
+  { icon: 'autorenew', title: 'Ongoing reviews', text: 'Employees get periodic or event-driven reviews as life changes.' },
+];
+---
+<PageLayout title="myWaive for Employers" description="Your employees benefit: personalised, regulated pension advice that makes your contribution spend work harder and improves financial wellbeing." theme="light" cta={{ headline: 'Improve the financial outcome for your employees', sub: 'See how myWaive adds value to your benefits programme.', screen: 'desktop-dashboard' }}>
+  <HeroDark
+    tone="lilac"
+    hideActions
+    accent="cyan"
+    headline="Personalised financial advice for all your employees"
+    highlight="all your employees"
+    sub="Pension management, engagement and advice for your workforce - inclusive, affordable and personalised to every individual."
+    photo="corporates-hero"
+    photoRatio="4 / 3"
+    image="An employee checking their pension on a phone during a break"
+    cards={[
+      { icon: 'calculate', label: 'Contribution calculator', value: '+£27 / month', progress: 72, note: '£12k more at retirement' },
+      { icon: 'school', label: 'Next lesson', value: 'Tax relief explained', note: '4 min read' },
+    ]}
+  />
+  <FeatureList eyebrow="" headline="myWaive engaging employees with their pensions" items={benefits} tone="lilac" columns={3} />
+  <ImageBanner
+    accent="cyan"
+    headline="You fund the pension. Who helps employees maximise its value?"
+    text="Corporates spend £billions on pension contributions every year but, without advice, employees remain disengaged - leading to fund inertia, under-saving and poor retirement planning."
+    photo="corporates-impact"
+    alt="Colleagues laughing together in a staff break room"
+  />
+  <BusinessCase
+    eyebrow=""
+    headline="myWaive - a strong return on investment"
+    columns={[
+      { icon: 'business_center', title: 'For your business', points: ['Reduces the cost of delivering advice significantly', 'Makes the most of the spend you make towards employees’ pension contributions', 'A true differentiator in your benefits package, helping engage and retain your talent'] },
+      { icon: 'groups', title: 'For your people', points: ['Personalised financial advice on their workplace savings', 'Engaging tool - supports planning for a better outcome at retirement and enhances financial wellbeing', 'Can be taken with employees when they leave'] },
+      { icon: 'settings', title: 'Seamless integration', points: ['Fully aligned with your employee benefits strategy', 'Embedded in your employee benefits technology, or as a standalone tool', 'Integrates with your payroll and your pension provider'] },
+    ]}
+  />
+  <HowItWorks eyebrow="" headline="Live in weeks, not years" steps={rollout} id="rollout" tone="white" layout="timeline" />
+  <Testimonials audience="corporates" tone="lilac" limit={1} eyebrow={false} headline="" />
+</PageLayout>
