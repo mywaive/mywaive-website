@@ -65,7 +65,8 @@ if (form) {
       return;
     }
     try {
-      const res = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
+      const body = new URLSearchParams(new FormData(form) as unknown as Record<string, string>);
+      const res = await fetch(form.action, { method: 'POST', body, headers: { Accept: 'application/json' } });
       if (!res.ok) throw new Error(String(res.status));
       form.classList.add('sent'); ok.hidden = false; ok.focus();
     } catch {

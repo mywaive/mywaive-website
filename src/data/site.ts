@@ -23,8 +23,9 @@ export const site = {
   social: [
     { label: 'LinkedIn', href: 'https://www.linkedin.com/company/mywaive-io/posts/?feedView=all', icon: 'linkedin' as const },
   ],
-  /** Hosted form endpoint (e.g. Formspree). Leave empty until the client chooses a provider. */
-  formEndpoint: import.meta.env.PUBLIC_FORM_ENDPOINT ?? '',
+  /** Where the contact form posts. Defaults to the site's own /api/contact handler
+   *  (scripts/contact.mjs). Set PUBLIC_FORM_ENDPOINT to post to an external provider instead. */
+  formEndpoint: import.meta.env.PUBLIC_FORM_ENDPOINT || '/api/contact',
 };
 
 export type NavItem = { label: string; href: string; children?: { label: string; href: string; desc?: string }[] };

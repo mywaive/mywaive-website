@@ -28,11 +28,15 @@ The site's own URL is set by `site` in `astro.config.mjs` (`https://www.mywaive.
 
 | Variable | Used by | When |
 |---|---|---|
-| `PUBLIC_FORM_ENDPOINT` | ContactForm | **Build time.** The URL the contact form posts to. It is written into the HTML, so changing it needs a rebuild. When empty, the form shows a "not connected" message |
+| `CONTACT_TO` | `scripts/contact.mjs` | **Runtime.** Inbox that receives enquiries. Defaults to `hello@mywaive.io` |
+| `CONTACT_FROM` | `scripts/contact.mjs` | **Runtime.** The `From` address. Defaults to `myWaive website <hello@mywaive.io>` |
+| `SMTP_HOST`, `SMTP_PORT` | `scripts/contact.mjs` | **Runtime.** Mail server. Default `relay-hosting.secureserver.net:25` (GoDaddy's internal relay) |
+| `SMTP_USER`, `SMTP_PASS` | `scripts/contact.mjs` | **Runtime.** Set to use an authenticated mailbox instead of the relay. `SMTP_SECURE` forces TLS (otherwise inferred: on for port 465) |
+| `PUBLIC_FORM_ENDPOINT` | ContactForm | **Build time.** Override where the form posts. It is written into the HTML, so changing it needs a rebuild. When empty, the form posts to the site's own `/api/contact` |
 | `VERCEL_ENV` | BaseLayout | Set automatically by Vercel. Any value other than `production` adds `noindex` to every page |
 | `ATLASCLOUD_API_KEY` | `scripts/images/generate.mjs` | Local tooling only; never needed for a build |
 
-For local builds, copy `.env.example` to `.env`. On a host, set the variables in its build settings. `.env` is git-ignored; never commit secrets.
+Build-time variables must be set before `npm run build`; runtime variables are read by the Node server each time it starts (`scripts/contact.mjs` uses them to send mail). For local work, copy `.env.example` to `.env` — the server loads it on start. On a host, set the variables in its Node app / build settings. `.env` is git-ignored; never commit secrets.
 
 ## Host requirements
 
@@ -56,13 +60,13 @@ Send these on every response:
 
 | Header | Value |
 |---|---|
-| `Content-Security-Policy` | `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://formspree.io; form-action 'self' https://formspree.io; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests` |
+| `Content-Security-Policy` | `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests` |
 | `X-Content-Type-Options` | `nosniff` |
 | `X-Frame-Options` | `DENY` |
 | `Referrer-Policy` | `strict-origin-when-cross-origin` |
 | `Permissions-Policy` | `camera=(), microphone=(), geolocation=(), interest-cohort=()` |
 
-The CSP allows only same-origin scripts, styles, fonts and images, plus the contact form endpoint. If the form moves to a different provider, add that provider's origin to `connect-src` and `form-action`, or submissions will be blocked.
+The CSP allows only same-origin scripts, styles, fonts and images. The contact form posts to the site's own `/api/contact`, so `'self'` already covers it. If `PUBLIC_FORM_ENDPOINT` is pointed at a different-origin provider, add that provider's origin to `connect-src` and `form-action`, or submissions will be blocked.
 
 ### Caching
 
@@ -90,29 +94,35 @@ npm run deploy           # build and deploy to production
 
 Both run `astro build` and then the Vercel CLI, which asks you to log in on first use. `vercel.json` provides the redirects, headers and caching above. `.vercelignore` keeps `context/`, `content/`, `docs/` and other local files out of the upload.
 
-## Other hosts (e.g. GoDaddy)
+## GoDaddy (Node.js hosting)
 
-To host somewhere else, such as GoDaddy's cPanel web hosting:
+GoDaddy's Node.js hosting (cPanel → **Setup Node.js App**, Phusion Passenger) runs the bundled server, `scripts/serve-dist.mjs`. The server does two jobs: it serves the built static site from `dist/` with the redirects, headers and caching from `vercel.json`, and it handles `POST /api/contact` to email enquiries (see [Contact form](#contact-form)). One Node process covers the whole site — there is no separate web server or `.htaccess` to configure.
 
-1. Build locally with the production environment variables set.
-2. Upload the **contents** of `dist/` to the web root (on cPanel, usually `public_html/`).
-3. Recreate every rule in [Host requirements](#host-requirements) in the host's own configuration. On Apache-based hosting such as cPanel, that means an `.htaccess` file in the web root. The repository does not include one yet.
-4. Run the QA suite against the live URL (see above) and confirm the response headers in the browser's developer tools.
+1. **Build locally:** `npm ci && npm run build`. (The host does not need to build; it only runs the server.)
+2. **Upload the project** to the application directory: `dist/`, `scripts/`, `vercel.json`, `package.json` and `package-lock.json`. `dist/` is git-ignored, so include it explicitly (upload it, or build on the host).
+3. **Install runtime dependencies on the host:** `npm ci --omit=dev` (the cPanel app has a "Run NPM Install" button, or use the app's terminal).
+4. **Configure the Node app** in cPanel:
+   - **Node.js version:** 22.12 or later.
+   - **Application startup file:** `scripts/serve-dist.mjs`. Passenger runs it directly and provides `PORT`; the server needs no command-line arguments.
+   - **Environment variables:** at minimum the contact-form settings from [Environment variables](#environment-variables) (`CONTACT_TO`, `SMTP_HOST`, `SMTP_PORT`, and `SMTP_USER`/`SMTP_PASS` if using an authenticated mailbox).
+5. **Start (or restart) the app**, then run the QA suite against the live URL (see above) and send a test enquiry to confirm it arrives at `hello@mywaive.io`.
 
-Without step 3, the site still loads, but it loses its security headers, the trailing-slash and `/for-industries` redirects, and long-term caching.
+### Static-only hosts
+
+On a host that can only serve static files (e.g. plain cPanel shared hosting), upload the **contents** of `dist/` to the web root (usually `public_html/`) and recreate every rule in [Host requirements](#host-requirements) in the host's own config — on Apache that means an `.htaccess` file in the web root (the repository does not include one yet). The contact form will **not** work there: `/api/contact` needs the Node server. Either host on Node.js hosting, or set `PUBLIC_FORM_ENDPOINT` to an external provider before building.
 
 ## Contact form
 
-The form posts to whatever URL `PUBLIC_FORM_ENDPOINT` holds, and expects a JSON response (it sends `Accept: application/json`). It is built for [Formspree](https://formspree.io):
+The form posts to the site's own `/api/contact`, handled by `scripts/contact.mjs` running inside the Node server. It parses the submission, drops honeypot spam, and emails the enquiry to `CONTACT_TO` (default `hello@mywaive.io`), with the sender's address as `Reply-To` so you can reply directly. The JavaScript path sends `Accept: application/json` and reads a `{ "ok": true }` response; the no-JavaScript path gets a plain thank-you page.
 
-1. Create a form in Formspree and set the email address that should receive enquiries.
-2. Set `PUBLIC_FORM_ENDPOINT=https://formspree.io/f/<form-id>` in the build environment.
-3. Rebuild and deploy.
-4. Send a test enquiry and confirm it arrives.
+Mail is sent over SMTP, configured by the `SMTP_*` / `CONTACT_*` variables in [Environment variables](#environment-variables):
 
-The hidden `_gotcha` field is Formspree's spam trap. A submission with that field filled in is discarded.
+- **Default — GoDaddy's internal relay** (`relay-hosting.secureserver.net:25`, no login). Works only from inside GoDaddy hosting and has weaker deliverability (add SPF/DKIM for the domain to reduce spam filtering). No credentials to manage.
+- **Authenticated mailbox** (recommended for deliverability): set `SMTP_USER`/`SMTP_PASS` and point `SMTP_HOST`/`SMTP_PORT` at the mailbox's SMTP. For GoDaddy email that is `smtpout.secureserver.net:465`.
 
-Any endpoint that accepts a `multipart/form-data` POST and returns a 2xx status on success will work, including a script on your own server. If it is on another origin, update the CSP as described in [Security headers](#security-headers). Whichever service handles submissions processes personal data, so name it in the privacy policy.
+The hidden `_gotcha` field is a spam trap: a submission with it filled in is silently accepted but never emailed. To move delivery to a third-party provider instead, set `PUBLIC_FORM_ENDPOINT` to its URL and rebuild (and add its origin to the CSP's `connect-src`/`form-action`, per [Security headers](#security-headers)). Whichever service handles submissions processes personal data, so name it in the privacy policy.
+
+To test the full pipeline locally without a reachable SMTP server, set `SMTP_JSON=true`: the server composes each message but does not send it.
 
 ## Release checklist
 

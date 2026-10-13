@@ -1,9 +1,15 @@
-import http from 'node:http'; import fs from 'node:fs'; import path from 'node:path';
-const root = process.argv[2]; const v = JSON.parse(fs.readFileSync(process.argv[3], 'utf8'));
+import http from 'node:http'; import fs from 'node:fs'; import path from 'node:path'; import { fileURLToPath } from 'node:url';
+import { handleContact } from './contact.mjs';
+try { process.loadEnvFile('.env'); } catch {} // local dev reads .env; on a host the vars come from its config
+// Args are optional so a Node host (e.g. GoDaddy/Passenger) can run this file directly as the
+// startup file. Defaults resolve from the repo root, independent of the current working directory.
+const repo = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+const root = process.argv[2] || path.join(repo, 'dist'); const v = JSON.parse(fs.readFileSync(process.argv[3] || path.join(repo, 'vercel.json'), 'utf8'));
 const global = v.headers.find((h) => h.source === '/(.*)').headers;
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png', '.webp': 'image/webp', '.jpg': 'image/jpeg', '.woff2': 'font/woff2', '.xml': 'application/xml', '.txt': 'text/plain', '.json': 'application/json' };
 http.createServer((req, res) => {
   const url = decodeURIComponent(req.url.split('?')[0]);
+  if (url === '/api/contact') { if (req.method === 'POST') return void handleContact(req, res); res.writeHead(405, { Allow: 'POST' }); return res.end(); }
   for (const r of v.redirects) if (url === r.source) { res.writeHead(308, { Location: r.destination }); return res.end(); }
   if (url.length > 1 && url.endsWith('/')) { res.writeHead(308, { Location: url.slice(0, -1) }); return res.end(); }
   let f = path.join(root, url); if (fs.existsSync(f) && fs.statSync(f).isDirectory()) f = path.join(f, 'index.html');
