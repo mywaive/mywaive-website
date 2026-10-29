@@ -11,3 +11,8 @@
 /* Electric Ruby on every tone — a later duplicate rule used to override this back to blue */
 .quote :global(.quote-mark) { color: var(--colour-electric-ruby); margin-bottom: var(--space-3); }
 blockquote footer { margin-top: var(--space-4); font-weight: 500; }
+/* Featured quote: a plain, slow fade once it is in view (replaced a scroll-scrubbed blur). No rise,
+   and slower than the site's 700ms reveal, so the fade is actually seen on a large block of text. */
+@media (prefers-reduced-motion: no-preference) {
+  :global(html.js) .feature .quote[data-reveal] { transform: none; transition: opacity 1400ms var(--ease-out) 150ms; }
+}

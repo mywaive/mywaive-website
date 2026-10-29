@@ -78,7 +78,7 @@ The main page hero: headline, supporting copy, CTA buttons, and a visual on the 
 | `desktopScreen` | `string` | | Desktop screen in a browser frame; takes priority over `photo` and `screen` |
 | `image` | `string` | | Alt text for the visual (or the brief shown on the placeholder) |
 | `imageIcon` | `string` | `'person'` | Icon on the placeholder |
-| `cards` | `{ icon, label, value, note?, progress? }[]` | `[]` | Floating cards over the visual (see FloatingCard) |
+| `cards` | `{ icon, label?, value, note?, progress? }[]` | `[]` | Floating cards over the visual (see FloatingCard) |
 | `compact` | `boolean` | `false` | Less padding underneath |
 
 Used on: home, product, all three industry pages.
@@ -253,7 +253,7 @@ Used on: product, partners.
 
 ### Roadmap
 
-The life-stage journey ("while you're saving… and into retirement"), from `roadmap` in `data/copy.ts`.
+The life-stage journey ("while saving… and into retirement"), from `roadmap` in `data/copy.ts`.
 
 | Prop | Type | Default |
 |---|---|---|
@@ -263,11 +263,11 @@ Used on: product.
 
 ### PeopleGrid
 
-Leadership or advisory board as square tiles, from the `team` or `advisors` collection, sorted by `order`.
+Leadership and advisory board as square tiles, from the `team` and/or `advisors` collections. Each collection is sorted by `order`; pass both to render them as one grid, in the order given.
 
 | Prop | Type | Default |
 |---|---|---|
-| `collection` | `'team' \| 'advisors'` | **required** |
+| `collection` | `'team' \| 'advisors'`, or an array of both | **required** |
 | `headline` | `string` | **required** |
 | `columns` | `3 \| 4 \| 5` | `3` |
 
@@ -422,7 +422,7 @@ A small product-style card that floats over hero visuals. It is decorative. A nu
 
 | Prop | Type | Default |
 |---|---|---|
-| `icon`, `label`, `value` | `string` | **required** |
-| `note` | `string` | |
+| `icon`, `value` | `string` | **required** |
+| `label`, `note` | `string` | |
 | `progress` | `number` (0–100) | Shows a progress bar |
 | `class` | `string` | |

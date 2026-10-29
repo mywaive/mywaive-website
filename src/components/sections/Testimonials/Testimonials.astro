@@ -1,7 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
 import Icon from '@/components/ui/Icon/Icon.astro';
-import { splitWords } from '@/utils/words';
 interface Props { eyebrow?: string | false; headline?: string; audience?: 'providers' | 'corporates' | 'partners'; limit?: number; only?: string; tone?: 'dark' | 'white' | 'lilac' | 'ruby-tint'; dotted?: boolean;
   /** One large centred quote with no card (Home, Pension providers). */
   feature?: boolean; highlight?: string }
@@ -25,11 +24,11 @@ list = list.slice(0, limit);
     )}
     <ul class:list={['grid', list.length === 1 ? 'one' : 'grid-3']} role="list" data-stagger>
       {list.map((t) => (
-        <li class="quote" data-reveal={feature ? undefined : ''}>
+        <li class="quote" data-reveal>
           {!feature && <Icon name="format_quote" size={40} class="quote-mark" fill />}
           <blockquote>
             {feature
-              ? <p class="h3" data-scroll-reveal>{splitWords(`“${t.data.quote}”`).map((w, i) => <>{i > 0 && ' '}<span class="sr-word">{w.map((p) => p.text)}</span></>)}</p>
+              ? <p class="h3">“{t.data.quote}”</p>
               : <p class={list.length === 1 ? 'h1' : 'lead'}>{t.data.quote}</p>}
             <footer class="muted">{!feature && '- '}{t.data.attribution}, {t.data.organisation}</footer>
           </blockquote>

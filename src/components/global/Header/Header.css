@@ -7,6 +7,8 @@
 .theme-dark:not(.scrolled):not(.menu-open) :global(.logo-light) { display: none; }
 .theme-dark:not(.scrolled):not(.menu-open) :global(.logo-dark) { display: inline-flex; }
 .theme-dark:not(.scrolled):not(.menu-open) .nav-link:hover { background: rgba(255,255,255,0.1); }
+/* Over the Wave-blue home hero the blue CTA would vanish, so it goes white until the header docks */
+.theme-dark:not(.scrolled):not(.menu-open) :global(.header-cta) { background: #fff; color: var(--color-brand-dark); }
 
 .scrolled { position: fixed; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); box-shadow: 0 1px 0 var(--color-border); padding-block: var(--space-2); animation: slide-down var(--dur) var(--ease); }
 @keyframes slide-down { from { transform: translateY(-100%); } to { transform: none; } }

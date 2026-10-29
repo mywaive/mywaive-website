@@ -1,5 +1,5 @@
 /**
- * Split text into words for per-word animation (BlurText, ScrollReveal), at build time.
+ * Split text into words for per-word animation (BlurText), at build time.
  * Each word is a list of pieces so a highlight that ends mid-word ("everyone" + ".")
  * stays one word and keeps its styling.
  */
