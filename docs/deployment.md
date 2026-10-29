@@ -29,7 +29,7 @@ The site's own URL is set by `site` in `astro.config.mjs` (`https://www.mywaive.
 | Variable | Used by | When |
 |---|---|---|
 | `CONTACT_TO` | `scripts/contact.mjs` | **Runtime.** Inbox(es) that receive enquiries; comma-separate for several. Defaults to `jchapman@mywaive.io, james@mywaive.io, hello@mywaive.io` |
-| `CONTACT_FROM` | `scripts/contact.mjs` | **Runtime.** The `From` address — must be the mailbox the sender is authorised to send as (`jchapman@mywaive.io`). `Reply-To` is set to the enquirer regardless |
+| `CONTACT_FROM` | `scripts/contact.mjs` | **Runtime.** The `From` address — must be the mailbox the sender is authorised to send as (`hello@mywaive.io`). `Reply-To` is set to the enquirer regardless |
 | `GRAPH_TENANT_ID`, `GRAPH_CLIENT_ID`, `GRAPH_CLIENT_SECRET` | `scripts/contact.mjs` | **Runtime.** When set, mail is sent via Microsoft Graph (app-only OAuth) — the preferred path. `GRAPH_SENDER` overrides the mailbox to send as (defaults to the `CONTACT_FROM` address) |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` | `scripts/contact.mjs` | **Runtime.** SMTP fallback, used only when `GRAPH_*` is unset (e.g. a transactional provider). `SMTP_SECURE` forces implicit TLS; otherwise inferred (on only for port 465). `SMTP_JSON=true` composes without sending, for local dev |
 | `PUBLIC_FORM_ENDPOINT` | ContactForm | **Build time.** Override where the form posts. It is written into the HTML, so changing it needs a rebuild. When empty, the form posts to the site's own `/api/contact` |
@@ -122,24 +122,25 @@ The form posts to the site's own `/api/contact`, handled by `scripts/contact.mjs
 1. **Register an app:** Entra admin centre → *App registrations* → *New registration*. Name it (e.g. "myWaive website contact form"), single-tenant, no redirect URI. Note the **Directory (tenant) ID** and **Application (client) ID**.
 2. **Grant send permission:** the app → *API permissions* → *Add a permission* → *Microsoft Graph* → **Application permissions** → **Mail.Send** → Add, then **Grant admin consent**.
 3. **Create a secret:** the app → *Certificates & secrets* → *New client secret*. Copy the secret **Value** immediately (shown once).
-4. **Scope it to one mailbox (recommended):** `Mail.Send` application permission lets the app send as *any* mailbox. Restrict it to `jchapman@mywaive.io` with an [application access policy](https://learn.microsoft.com/graph/auth-limit-mailbox-access) in Exchange Online PowerShell:
+4. **Scope it to one mailbox (recommended):** `Mail.Send` application permission lets the app send as *any* mailbox. Restrict it to `hello@mywaive.io` with an [application access policy](https://learn.microsoft.com/graph/auth-limit-mailbox-access) in Exchange Online PowerShell:
    ```powershell
-   New-ApplicationAccessPolicy -AppId <client-id> -PolicyScopeGroupId jchapman@mywaive.io `
-     -AccessRight RestrictAccess -Description "myWaive contact form may send only as jchapman@"
+   New-ApplicationAccessPolicy -AppId <client-id> -PolicyScopeGroupId hello@mywaive.io `
+     -AccessRight RestrictAccess -Description "myWaive contact form may send only as hello@"
    ```
+   `hello@mywaive.io` can be a **shared mailbox** (no licence needed for app-only Graph sending) — not a distribution list, which cannot be sent *as* via Graph.
 5. **Set the env vars** on the host (cPanel → Node app) and restart:
    ```
    GRAPH_TENANT_ID     = <directory (tenant) id>
    GRAPH_CLIENT_ID     = <application (client) id>
    GRAPH_CLIENT_SECRET = <secret value>
-   GRAPH_SENDER        = jchapman@mywaive.io      # optional; defaults to the CONTACT_FROM address
-   CONTACT_FROM        = myWaive website <jchapman@mywaive.io>
+   GRAPH_SENDER        = hello@mywaive.io         # optional; defaults to the CONTACT_FROM address
+   CONTACT_FROM        = myWaive website <hello@mywaive.io>
    CONTACT_TO          = jchapman@mywaive.io, james@mywaive.io, hello@mywaive.io
    ```
 
-`GRAPH_SENDER` / `CONTACT_FROM` must be a real licensed mailbox the app is allowed to send as (`jchapman@mywaive.io`). `hello@mywaive.io` stays valid as a *recipient* in `CONTACT_TO` — the send-as restriction only applies to the `From`. Enquirers are reachable because `Reply-To` is set to their address.
+`GRAPH_SENDER` / `CONTACT_FROM` must be a real mailbox the app is allowed to send as (`hello@mywaive.io` — a shared mailbox works and needs no licence). It can also remain a *recipient* in `CONTACT_TO`, so a copy of each enquiry lands in the shared inbox; the send-as restriction only applies to the `From`. Enquirers are reachable because `Reply-To` is set to their address.
 
-On success the app log shows `[contact] sent via Graph as jchapman@mywaive.io to …`. A failure logs the Graph error (e.g. `graph sendMail 403` if the access policy blocks the sender, `graph token 401` for a bad secret), and the form returns a 500.
+On success the app log shows `[contact] sent via Graph as hello@mywaive.io to …`. A failure logs the Graph error (e.g. `graph sendMail 403` if the access policy blocks the sender, `graph token 401` for a bad secret), and the form returns a 500.
 
 #### SMTP fallback
 
@@ -161,7 +162,7 @@ Set these DNS records for `mywaive.io` (in GoDaddy's DNS manager, since the doma
 
 Verify after deploying:
 
-1. Submit a test enquiry and confirm the log line `[contact] sent via Graph as jchapman@mywaive.io to …` (or, on the SMTP fallback, `[contact] sent … response=250`).
+1. Submit a test enquiry and confirm the log line `[contact] sent via Graph as hello@mywaive.io to …` (or, on the SMTP fallback, `[contact] sent … response=250`).
 2. Send one to an external Gmail address, open **Show original**, and check `SPF: PASS`, `DKIM: PASS`, `DMARC: PASS`.
 3. Optionally run the message through [mail-tester.com](https://www.mail-tester.com) for a deliverability score.
 

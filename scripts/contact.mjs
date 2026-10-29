@@ -10,7 +10,7 @@ import nodemailer from 'nodemailer';
 
 const MAX_BODY = 64 * 1024; // enquiries are tiny; anything larger is abuse
 const TO = process.env.CONTACT_TO || 'jchapman@mywaive.io, james@mywaive.io, hello@mywaive.io';
-const FROM = process.env.CONTACT_FROM || 'myWaive website <jchapman@mywaive.io>';
+const FROM = process.env.CONTACT_FROM || 'myWaive website <hello@mywaive.io>';
 const addr = (s) => (/<([^>]+)>/.exec(s)?.[1] || s).trim(); // bare address from "Name <addr>"
 const recipients = (s) => s.split(',').map(addr).filter(Boolean);
 
