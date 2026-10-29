@@ -4,7 +4,6 @@
 .about-hero-copy .lead { color: var(--colour-grey-800); max-width: 45ch; margin-inline: auto; }
 .about-video { display: block; width: min(100%, 880px); aspect-ratio: 16 / 9; margin: clamp(var(--space-6), 4vw, var(--space-7)) auto 0; border-radius: var(--radius-lg); background: #0b1f14; box-shadow: 0 32px 70px rgba(0, 58, 46, 0.22); }
 
-.people-band :global(.people + .people) { margin-top: clamp(var(--space-8), 6vw, var(--space-10)); }
 .people-band :global(.people-heading) { color: var(--colour-primary-100); }
 
 .origins-grid { display: grid; gap: var(--space-7); align-items: center; }

@@ -9,6 +9,15 @@
 .tone-lilac .hero-glow { display: none; }
 .tone-lilac .hero-visual { max-width: 620px; }
 .tone-light h1 { color: var(--color-brand); }
+/* Pension providers: the softer pink from the client's reference (bg-pink's ruby-400 read too loud); highlight stays Wave blue */
+.tone-pink { background-color: #f9dbf0; }
+/* Brand (home): Wave-blue field, white type, cyan highlight (3.9:1 on Wave, large text).
+   A faint white dot grid (the interactive .dotted one, lighting cyan near the pointer) and a cyan glow
+   behind the photo keep the blue from reading flat. */
+.tone-brand { --hero-hl: var(--colour-electric-cyan); --hero-glow: rgba(0, 249, 241, 0.32); --dot: rgba(255, 255, 255, 0.14); --dot-hot: 0, 249, 241; }
+.tone-brand .lead { color: var(--colour-white); opacity: 0.92; }
+.tone-brand .hero-glow { right: -12vw; top: -8vw; }
+.tone-brand .hero-photo { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.14), 0 32px 80px rgba(3, 10, 47, 0.35); }
 /* Product: screen in a Wave-blue rim (as drawn) */
 .tone-white .desk-stage :global(.browser) { box-shadow: 0 0 0 4px var(--color-brand), 0 24px 60px rgba(3, 10, 47, 0.18); }
 .hero { position: relative; overflow: hidden; padding-top: calc(var(--space-10) + 20px); padding-bottom: var(--section-y); }

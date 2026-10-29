@@ -8,14 +8,14 @@ import FloatingCard from '@/components/ui/FloatingCard/FloatingCard.astro';
 import PhoneFrame from '@/components/ui/PhoneFrame/PhoneFrame.astro';
 import BrowserFrame from '@/components/ui/BrowserFrame/BrowserFrame.astro';
 import { splitWords } from '@/utils/words';
-interface Card { icon: string; label: string; value: string; note?: string; progress?: number }
+interface Card { icon: string; label?: string; value: string; note?: string; progress?: number }
 interface Props {
   eyebrow?: string; headline: string; highlight?: string; sub?: string;
   primary?: { label: string; href: string }; secondary?: { label: string; href: string };
   image?: string; imageIcon?: string; screen?: string; photo?: string; cards?: Card[]; compact?: boolean;
   accent?: 'wave' | 'cyan' | 'ruby';
-  /** 'dark' (default), or a light hero: 'lilac' (Primary 100), 'light' (brilliant white, brand-blue headline), 'pink' or 'white'. */
-  tone?: 'dark' | 'lilac' | 'light' | 'pink' | 'white';
+  /** 'dark' (default), 'brand' (Wave blue, white type), or a light hero: 'lilac' (Primary 100), 'light' (brilliant white, brand-blue headline), 'pink' or 'white'. */
+  tone?: 'dark' | 'brand' | 'lilac' | 'light' | 'pink' | 'white';
   /** Hide the CTA buttons (feedback P2). */
   hideActions?: boolean;
   photoRatio?: string;
@@ -26,7 +26,7 @@ const { eyebrow, headline, highlight, sub, primary = { label: 'Book a demo', hre
 const photos = import.meta.glob<{ default: ImageMetadata }>('/src/assets/photos/*.{png,jpg,jpeg,webp}', { eager: true });
 const hasPhoto = !!photo && Object.keys(photos).some((p) => p.replace(/^.*\//, '').replace(/\.[^.]+$/, '') === photo);
 ---
-<section class:list={['hero', tone === 'dark' ? 'bg-dark on-dark' : `${{ lilac: 'bg-lilac', light: 'bg-tint', pink: 'bg-pink', white: 'bg-white' }[tone]} on-light tone-lilac tone-${tone}`, `accent-${accent}`, { compact }]}>
+<section class:list={['hero', tone === 'dark' ? 'bg-dark on-dark' : tone === 'brand' ? 'bg-brand on-dark tone-brand dotted' : `${{ lilac: 'bg-lilac', light: 'bg-tint', pink: 'bg-pink', white: 'bg-white' }[tone]} on-light tone-lilac tone-${tone}`, `accent-${accent}`, { compact }]}>
   <div class="hero-glow" aria-hidden="true"></div>
   <div class="container hero-grid">
     <div class="hero-copy">
@@ -35,7 +35,7 @@ const hasPhoto = !!photo && Object.keys(photos).some((p) => p.replace(/^.*\//, '
       {sub && <p class="lead muted">{sub}</p>}
       {!hideActions && (
         <div class="hero-actions">
-          <span class="magnet" data-magnet><Button href={primary.href} size="lg" icon="arrow_forward">{primary.label}</Button></span>
+          <span class="magnet" data-magnet><Button href={primary.href} size="lg" icon="arrow_forward" variant={tone === 'brand' ? 'inverse' : 'primary'}>{primary.label}</Button></span>
           {secondary && <Button href={secondary.href} size="lg" variant="ghost">{secondary.label}</Button>}
         </div>
       )}

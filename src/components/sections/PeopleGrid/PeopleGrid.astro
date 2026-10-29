@@ -5,10 +5,12 @@
 import { getCollection } from 'astro:content';
 import Avatar from '@/components/ui/Avatar/Avatar.astro';
 import SocialIcon from '@/components/ui/SocialIcon/SocialIcon.astro';
-interface Props { collection: 'team' | 'advisors'; headline: string; columns?: 3 | 4 | 5 }
+type Collection = 'team' | 'advisors';
+interface Props { collection: Collection | Collection[]; headline: string; columns?: 3 | 4 | 5 }
 // columns is the desktop count; tablet steps down to 3 so a 5-up row reads 3 + 2 rather than 2 + 2 + 1.
 const { collection, headline, columns = 3 } = Astro.props;
-const people = (await getCollection(collection)).sort((a, b) => a.data.order - b.data.order);
+// Several collections render as one grid, in the order given, each sorted by its own `order`.
+const people = (await Promise.all([collection].flat().map(async (c) => (await getCollection(c)).sort((a, b) => a.data.order - b.data.order)))).flat();
 ---
 <div class="people shape-square" style={`--cols:${columns};--cols-md:${columns === 4 ? 2 : 3}`}>
   <h2 class="h3 people-heading" data-reveal>{headline}</h2>

@@ -117,7 +117,7 @@ Files in `public/` are served exactly as they are, with no processing: logos, fa
 |---|---|---|
 | `public/js/flag.js` | BaseLayout, blocking, in `<head>` | Adds `js` to `<html>` before first paint so reveal content can start hidden |
 | `src/scripts/reveal.ts` | `BaseLayout.ts` | Fades in `[data-reveal]` elements once, as they scroll into view |
-| `src/scripts/effects.ts` | `BaseLayout.ts` | Pointer and scroll effects: spotlight, tilt, magnet, count-up, dot grid, scroll-revealed quotes |
+| `src/scripts/effects.ts` | `BaseLayout.ts` | Pointer and scroll effects: spotlight, tilt, magnet, count-up, dot grid |
 | `Header/Header.ts` | Header | Sticky-header state, mobile menu, dropdowns, Escape to close |
 | `FeatureTabs/FeatureTabs.ts` | FeatureTabs | Accessible tabs with arrow-key navigation and the sliding indicator |
 | `ContactForm/ContactForm.ts` | ContactForm | Validation, error summary, submission |
@@ -132,8 +132,7 @@ The effects are switched on by data attributes in the markup, so a component onl
 | `data-tilt` | The card tilts in 3D toward the pointer |
 | `data-magnet` | The element eases toward a nearby pointer |
 | `data-count` | The number counts up from 0 when it comes into view |
-| `data-scroll-reveal` | A quote's words un-blur and brighten as it scrolls in |
-| `.dotted` (class) | The dot pattern reacts to the pointer |
+| `.dotted` (class) | The dot pattern reacts to the pointer. `--dot` sets the dot colour, `--dot-hot` (r, g, b) the colour they light up in |
 
 ### Progressive enhancement
 

@@ -1,7 +1,7 @@
 ---
 import Icon from '@/components/ui/Icon/Icon.astro';
 /** Product-style UI card that floats over hero imagery (Acelia pattern). Decorative. */
-interface Props { icon: string; label: string; value: string; note?: string; progress?: number; class?: string }
+interface Props { icon: string; label?: string; value: string; note?: string; progress?: number; class?: string }
 const { icon, label, value, note, progress, class: cls = '' } = Astro.props;
 // React Bits CountUp (ported, src/scripts/effects.ts): the first number in a value or note counts up from 0.
 // Without JS it simply shows the final figure.
@@ -13,7 +13,7 @@ const n = note ? num(note) : null;
   <div class="fc-head">
     <span class="fc-icon"><Icon name={icon} /></span>
     <div>
-      <div class="fc-label">{label}</div>
+      {label && <div class="fc-label">{label}</div>}
       <div class="fc-value">{v ? <>{v[1]}<span data-count={v[2]}>{v[2]}</span>{v[3]}</> : value}</div>
     </div>
   </div>

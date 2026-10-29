@@ -1,7 +1,6 @@
 /**
  * Effects ported from React Bits (reactbits.dev, MIT + Commons Clause) to plain DOM,
  * so the site needs neither React nor GSAP/Motion:
- *   [data-scroll-reveal] ScrollReveal — words un-blur and brighten as the quote scrolls in; the block straightens from 3°
  *   [data-spotlight]     SpotlightCard — a soft light follows the pointer across the card
  *   [data-tilt]          TiltedCard    — 3D tilt toward the pointer
  *   [data-magnet]        Magnet        — the button eases toward a nearby pointer
@@ -12,38 +11,6 @@
  */
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
-
-function scrollReveal() {
-  const blocks = [...document.querySelectorAll<HTMLElement>('[data-scroll-reveal]')];
-  if (!blocks.length) return;
-  const BASE_OPACITY = 0.1, BLUR = 4, ROTATE = 3, STAGGER = 0.05;
-  const words = blocks.map((b) => [...b.querySelectorAll<HTMLElement>('.sr-word')]);
-  let queued = false;
-  const update = () => {
-    queued = false;
-    const vh = innerHeight;
-    blocks.forEach((block, bi) => {
-      const r = block.getBoundingClientRect();
-      // React Bits scrubs to "bottom bottom", which for a short quote is ~70px of scroll and reads as a snap.
-      // Here the words run from the quote's top at 85% of the viewport to 35%; the tilt settles over the first half.
-      const start = vh * 0.85, end = vh * 0.35;
-      const rot = Math.min(1, Math.max(0, (start - r.top) / ((start - end) / 2)));
-      block.style.transform = `rotate(${(ROTATE * (1 - rot)).toFixed(2)}deg)`;
-      const p = Math.min(1, Math.max(0, (start - r.top) / Math.max(1, start - end)));
-      const list = words[bi], span = 1 + STAGGER * (list.length - 1);
-      list.forEach((w, i) => {
-        const local = Math.min(1, Math.max(0, p * span - i * STAGGER));
-        w.style.opacity = String(BASE_OPACITY + (1 - BASE_OPACITY) * local);
-        w.style.filter = local >= 1 ? '' : `blur(${(BLUR * (1 - local)).toFixed(2)}px)`;
-      });
-    });
-  };
-  const queue = () => { if (!queued) { queued = true; requestAnimationFrame(update); } };
-  blocks.forEach((b) => { b.style.transformOrigin = '0% 50%'; });
-  addEventListener('scroll', queue, { passive: true });
-  addEventListener('resize', queue, { passive: true });
-  update();
-}
 
 function spotlight() {
   document.addEventListener('pointermove', (e) => {
@@ -115,7 +82,10 @@ function dotGrid() {
   const CELL = 18, R = 1.5, PROX = 120, SHOCK = 250, SPEED_TRIGGER = 100;
   const STIFF = 0.06, DAMP = 0.12; // per-frame spring: a little overshoot, like the original elastic return
   document.querySelectorAll<HTMLElement>('.dotted').forEach((section) => {
-    const base = getComputedStyle(section).getPropertyValue('--dot').trim() || 'rgba(9, 102, 255, 0.16)';
+    const css = getComputedStyle(section);
+    const base = css.getPropertyValue('--dot').trim() || 'rgba(9, 102, 255, 0.16)';
+    // r, g, b the dots light up in near the pointer; Wave blue unless the section sets --dot-hot (e.g. on a blue field)
+    const hot = css.getPropertyValue('--dot-hot').trim() || '9, 102, 255';
     const canvas = document.createElement('canvas');
     canvas.className = 'dotgrid-canvas';
     canvas.setAttribute('aria-hidden', 'true');
@@ -152,11 +122,11 @@ function dotGrid() {
         ctx.moveTo(cx + ox[i] + R, cy + oy[i]); ctx.arc(cx + ox[i], cy + oy[i], R, 0, Math.PI * 2);
       }
       ctx.fill();
-      // Near the pointer the dots tint to Wave blue and grow slightly
+      // Near the pointer the dots tint to the hot colour and grow slightly
       for (let k = 0; k < lit.length; k += 2) {
         const i = lit[k], t = 1 - lit[k + 1] / PROX;
         const cx = (i % cols) * CELL + CELL / 2 + ox[i], cy = Math.floor(i / cols) * CELL + CELL / 2 + oy[i];
-        ctx.fillStyle = `rgba(9, 102, 255, ${(0.16 + 0.74 * t).toFixed(3)})`;
+        ctx.fillStyle = `rgba(${hot}, ${(0.16 + 0.74 * t).toFixed(3)})`;
         ctx.beginPath(); ctx.arc(cx, cy, R + 0.8 * t, 0, Math.PI * 2); ctx.fill();
       }
     };
@@ -208,7 +178,6 @@ function dotGrid() {
 
 export function initEffects() {
   if (reduced) return;
-  scrollReveal();
   countUp();
   if (finePointer) { spotlight(); tilt(); magnet(); dotGrid(); }
 }

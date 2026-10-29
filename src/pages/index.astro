@@ -11,18 +11,18 @@ import Button from '@/components/ui/Button/Button.astro';
 import { features, howItWorks } from '@/data/copy';
 import { site } from '@/data/site';
 ---
-<PageLayout title={site.name} description={site.description} cta={{ headline: 'See myWaive in action', sub: 'A demo, tailored to your scheme, workforce or platform.', tone: 'lilac' }}>
+<PageLayout title={site.name} description={site.description} theme="dark" cta={{ headline: 'See myWaive in action', sub: 'A demo, tailored to your scheme, workforce or platform.', tone: 'lilac' }}>
   <HeroDark
-    tone="light"
+    tone="brand"
     headline="Workplace savings advice and guidance, for everyone"
     highlight="for everyone"
     sub="myWaive provides technology-enabled personalised savings advice and guidance to members - affordable, always-on, fully audited."
-    photo="home-hero-pair"
-    photoRatio="928 / 1024"
-    image="Two colleagues reviewing their workplace savings together on a laptop"
+    secondary={{ label: 'See how it works', href: '#how-it-works' }}
+    photo="home-hero"
+    image="A woman checking her pension on her phone at the kitchen table"
     cards={[
-      { icon: 'calculate', label: 'Contribution calculator', value: '+£27 / month', progress: 72, note: '£12k more at retirement' },
-      { icon: 'flag', label: 'Retirement projection', value: 'On track', note: 'Reviewed today' },
+      { icon: 'calculate', label: 'Contribution calculator', value: '+£50 / month', progress: 72, note: '£31k more at retirement' },
+      { icon: 'flag', label: 'Retirement modeller', value: 'On track', note: 'Reviewed today' },
     ]}
   />
 

@@ -36,7 +36,7 @@ export const trust = [
 
 export const roadmap = {
   saving: {
-    title: 'While you’re saving',
+    title: 'While saving',
     items: ['Savings and investments in one place', 'Consolidate pension pots', 'Personalised financial planning tools', 'Investment recommendations that suit you', 'Continuous reviews as your life changes', 'Tailored financial education'],
   },
   retirement: {

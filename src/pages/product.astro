@@ -16,10 +16,17 @@ import { onboarding } from '@/data/copy';
     hideActions
     headline="Putting regulated financial advice within reach of everyday savers"
     highlight="everyday savers"
-    desktopScreen="figma-transfer-step2"
-    image="myWaive desktop app - reviewing a pension transfer against the current provider"
+    desktopScreen="figma-fund-review"
+    image="myWaive desktop app - reviewing the company default fund's performance and risk profile"
   />
   <FeatureTabs eyebrow="" headline="Giving people greater confidence and control over their financial future" />
+  <Roadmap />
+  <PillarStrip items={[
+    { title: 'Low cost', colour: '#81b4fc', photo: 'laptop-cafe', alt: 'A saver checking their pension on a laptop in a café' },
+    { title: 'Better decisions', colour: '#c5b1f9', photo: 'woman-laptop-outdoor', alt: 'A woman reviewing her finances on a laptop outdoors' },
+    { title: 'Always-on', colour: '#96fce4', photo: 'providers-hero', alt: 'A man reviewing a recommendation on a tablet' },
+    { title: 'Stronger retirement', colour: '#ffb1d1', photo: 'about-why', alt: 'A retiree reviewing paperwork with his adult daughter' },
+  ]} />
   <!-- Deployment and onboarding share one white panel on a dotted mint field -->
   <section class="section bg-mint-bright dotted">
     <div class="container">
@@ -29,14 +36,7 @@ import { onboarding } from '@/data/copy';
       </div>
     </div>
   </section>
-  <PillarStrip items={[
-    { title: 'Low cost', colour: '#81b4fc', photo: 'laptop-cafe', alt: 'A saver checking their pension on a laptop in a café' },
-    { title: 'Better decisions', colour: '#c5b1f9', photo: 'woman-laptop-outdoor', alt: 'A woman reviewing her finances on a laptop outdoors' },
-    { title: 'Always-on', colour: '#96fce4', photo: 'providers-hero', alt: 'A man reviewing a recommendation on a tablet' },
-    { title: 'Stronger retirement', colour: '#ffb1d1', photo: 'about-why', alt: 'A retiree reviewing paperwork with his adult daughter' },
-  ]} />
   <TrustGrid headline="Built for data-centric, regulated environments" intro="myWaive is designed to operate in a regulated environment, with a complete audit trail behind every recommendation." />
-  <Roadmap />
 </PageLayout>
 
 <style>@import '../styles/pages/product.css';</style>
